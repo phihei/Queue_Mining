@@ -93,14 +93,14 @@ def analysisQueueArrivalRate(eventLog, eventList, interval, intervalUnit="days",
                 if eventList.__contains__(event["concept:name"]):
                     relevantEvents.append(event)
 
-    relevantEvents.sort(key='time:timestamp')
+    relevantEvents.sort(key=lambda event: event['time:timestamp'])
     values = []
     if cycle is None:
-        t = starttime
+        t = starttime + datetime.timedelta(days=interval)
         i = 0
         while t < endTime:
             values.append(0)
-            if relevantEvents[0]['time:timestamp'] < t:
+            while relevantEvents[0]['time:timestamp'] < t:
                 values[i] = values[i] + 1
                 relevantEvents.pop(0)
             t = t + datetime.timedelta(days=interval)
@@ -112,20 +112,17 @@ def parseString1(string):
     return 1
 
 def firstEventTime(eventLog):
-    earliestTime = datetime.datetime(2025, 1, 1)
+    earliestTime = datetime.datetime(2025, 1, 1, tzinfo=eventLog[0][0]["time:timestamp"].tzinfo)
     for trace in eventLog:
         for event in trace:
-            print(type(event["time:timestamp"]))
             if earliestTime > event["time:timestamp"]:
                 earliestTime = event["time:timestamp"]
     return earliestTime
 
 def lastEventTime(eventLog):
-    lastTime = datetime.datetime(1970, 1, 1)
+    lastTime = datetime.datetime(1970, 1, 2, tzinfo=eventLog[0][0]["time:timestamp"].tzinfo)
     for trace in eventLog:
         for event in trace:
-            print(type(lastTime))
-            print(type(event["time:timestamp"]))
             if lastTime < event["time:timestamp"]:
                 lastTime = event["time:timestamp"]
     return lastTime
