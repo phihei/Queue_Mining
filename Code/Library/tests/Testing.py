@@ -27,7 +27,7 @@ class TestLibrary(unittest.TestCase):
         warnings.filterwarnings('ignore', category=ResourceWarning)
         log = xes_importer.apply("running-example.xes")
         values = src.queuemining4pm4py.functions.analysisQueueArrivalRate(log, 'register request', 1)
-
+        self.assertListEqual(values, [3, 0, 0, 0, 0, 0, 1, 2])
 
 if __name__ == '__main__':
     print("Main ran.")

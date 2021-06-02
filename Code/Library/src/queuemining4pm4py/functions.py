@@ -95,14 +95,18 @@ def analysisQueueArrivalRate(eventLog, eventList, interval, intervalUnit="days",
 
     relevantEvents.sort(key=lambda event: event['time:timestamp'])
     values = []
+    if len(relevantEvents) == 0:
+        return None
     if cycle is None:
         t = starttime + datetime.timedelta(days=interval)
         i = 0
-        while t < endTime:
+        while t < endTime and len(relevantEvents) > 0:
             values.append(0)
             while relevantEvents[0]['time:timestamp'] < t:
                 values[i] = values[i] + 1
                 relevantEvents.pop(0)
+                if len(relevantEvents) == 0:
+                    break
             t = t + datetime.timedelta(days=interval)
             i = i+1
 
