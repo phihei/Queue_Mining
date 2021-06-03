@@ -51,16 +51,32 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
     mode = 0
     if type(interval) != datetime.timedelta:
         if type(interval) == str:
-            intervalNumber, intervalType = parseInterval(interval)
+            try:
+                intervalNumber, intervalType = parseDToS(interval)
+            except ValueError:
+                raise ValueError("Interval String is not of a correct format.")
             mode = 1
         else:
             raise TypeError("The type of interval must be a string or datetime.timedelta")
+
+    if startTime is None:
+        starttime = firstEventTime(eventLog)
+    elif type(startTime) != datetime.datetime:
+        raise TypeError("The type of startTime needs to be datetime.datetime")
+
+    if endTime is None:
+        endTime = lastEventTime(eventLog)
+    elif type(endTime) != datetime.datetime:
+        raise TypeError("The type of endTime needs to be datetime.datetime")
 
     intervalsinCycle = 0
     if cycle is not None:
         if type(cycle) != datetime.timedelta:
             if type(cycle) == str:
-                cycleNumber, cycleType = parseCycle(cycle)
+                try:
+                    cycleNumber, cycleType = parseDToS(cycle)
+                except ValueError:
+                    raise ValueError("Cycle String is not of a correct format.")
                 if mode == 0:
                     raise TypeError("The type of cycle and intervall must be the same")
                 else:
@@ -80,12 +96,8 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
                 raise ValueError("The cycle must be a multiple of the interval")
             intervalsinCycle = interval // cycle
 
-
-    if startTime is None:
-        starttime = firstEventTime(eventLog)
-
-    if endTime is None:
-        endTime = lastEventTime(eventLog)
+    if type(aligned) != bool:
+        raise TypeError("The type of aligned needs to be a bool.")
 
     relevantEvents = []
     for trace in eventLog:
@@ -146,9 +158,9 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
     return values
 
 
-def parseInterval(interval):
-    t = interval.lstrip("0123456789")
-    n = interval[:-len(t)]
+def parseDToS(string):
+    t = string.lstrip("0123456789")
+    n = string[:-len(t)]
     if n == "":
         n = 1
     else:
@@ -157,24 +169,7 @@ def parseInterval(interval):
         return n, "month"
     if t[:4] == "year":
         return n, "year"
-    raise ValueError("Interval String incorrect")
-
-
-def parseCycle(cycle):
-    t = cycle.lstrip("0123456789")
-    n = cycle[:-len(t)]
-    if n == "":
-        n = 1
-    else:
-        n = int(n)
-    if t[:4] == "week":
-        return n, "week"
-    if t[:5] == "month":
-        return n, "month"
-    if t[:4] == "year":
-        return n, "year"
-    raise ValueError("Cylce String incorrect")
-
+    raise ValueError("string incorrect")
 
 def firstEventTime(eventLog):
     earliestTime = datetime.datetime(2025, 1, 1, tzinfo=eventLog[0][0]["time:timestamp"].tzinfo)
