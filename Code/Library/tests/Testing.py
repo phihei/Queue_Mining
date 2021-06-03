@@ -18,16 +18,16 @@ class TestLibrary(unittest.TestCase):
 
     def test_analysisQueueArrivalRate_for_TypeErrors(self):
         warnings.filterwarnings('ignore', category=ResourceWarning)
-        self.assertRaises(TypeError, src.queuemining4pm4py.functions.analysisQueueArrivalRate, None, [], 1)
-        self.assertRaises(TypeError, src.queuemining4pm4py.functions.analysisQueueArrivalRate, "EventLog", [], 1)
+        self.assertRaises(TypeError, src.queuemining4pm4py.functions.analyzeQueueArrivalRate, None, [], 1)
+        self.assertRaises(TypeError, src.queuemining4pm4py.functions.analyzeQueueArrivalRate, "EventLog", [], 1)
         log = xes_importer.apply("running-example.xes")
-        self.assertRaises(TypeError, src.queuemining4pm4py.functions.analysisQueueArrivalRate, log, [], None)
-        self.assertRaises(TypeError, src.queuemining4pm4py.functions.analysisQueueArrivalRate, log, [], 0)
+        self.assertRaises(TypeError, src.queuemining4pm4py.functions.analyzeQueueArrivalRate, log, [], None)
+        self.assertRaises(TypeError, src.queuemining4pm4py.functions.analyzeQueueArrivalRate, log, [], 0)
 
     def test_analysisQueueArrivalRate_Behaviour(self):
         warnings.filterwarnings('ignore', category=ResourceWarning)
         log = xes_importer.apply("running-example.xes")
-        values = src.queuemining4pm4py.functions.analysisQueueArrivalRate(log, 'register request', datetime.timedelta(days=1))
+        values = src.queuemining4pm4py.functions.analyzeQueueArrivalRate(log, 'register request', datetime.timedelta(days=1))
         pass
         print("here")
 
