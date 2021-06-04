@@ -8,8 +8,7 @@ import networkx as nx
 import pm4py.objects.dfg.utils.dfg_utils as pm4pydfg
 import pm4py.stats
 
-import xes_to_nx_utilities
-import statistics_logs
+from Code.Library.src.queuemining4pm4py.statistics_logs import *
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 from pm4py.visualization.dfg import visualizer as dfg_visualization
@@ -21,6 +20,8 @@ from datetime import datetime, timedelta
 from pm4py.objects.log.exporter.xes import exporter as xes_expoter
 from enum import Enum
 
+from Code.Library.src.queuemining4pm4py import xes_to_nx_utilities
+
 
 class Parameters(Enum):
     ATTRIBUTE_KEY = constants.PARAMETER_CONSTANT_ATTRIBUTE_KEY
@@ -31,22 +32,22 @@ class Parameters(Enum):
 
 variant = xes_importer.Variants.ITERPARSE
 parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('../../../../logs/HospitalBillingEventLog_lifecycle.xes', variant=variant, parameters=parameters)
+log = xes_importer.apply('../../logs/HospitalBillingEventLog_lifecycle.xes', variant=variant, parameters=parameters)
 
 """"
 Test xes_to_nx_utilities
 """
-# G = xes_to_nx_utilities.transform_xes_log_to_nxDiGraph(log, variant='inductive')
+G = xes_to_nx_utilities.transform_xes_log_to_nxDiGraph(log, variant='inductive')
 #
-# nx.draw(G, with_labels=True)
-# plt.show()
+nx.draw(G, with_labels=True)
+plt.show()
 """"
 Test statistics_logs
 """
 #statistics_logs.case_duration_statistics(log,1, vt='test')
 #test
 #statistics_logs.case_duration_statistics_batch(False, '/home/heisenB/PycharmProjects/Queue_Mining/logs/', 'test_test')
-statistics_logs.activity_duration_statistics(log)
+#statistics_logs.activity_duration_statistics(log)
 
 """"
 Add lifecycle transitions if not contained and add random service times following a normal distribution
