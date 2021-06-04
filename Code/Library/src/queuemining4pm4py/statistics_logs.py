@@ -8,17 +8,36 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
+from pathlib import Path
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.statistics.traces.log import case_statistics
 
 
-def case_duration_statistics_batch( hist: bool, directory: str, vt: str):
+def case_duration_statistics_batch(time_distribution: bool, directory: str, name: str):
     """
-    directory format "/home/myproject/"
-    vt =  Provide a suitable name for the output file
-    hist = 'Enter 0, if you want general duration statistics about all event logs , Enter 1 if you want a time'
-                     'distribution for each event log'
+    This function is able to handle multiple event logs in a folder specified by the directory parameter. For each event
+    log basic statistics on end-to-end service time are computed. If time_distribution is set to True, a histogram of
+    the service time distribution is computed for each event log. All figures are then saved as .ong in a (new) subfolder
+    called "statistics" under the given directory.
+
+     Parameters
+        --------------
+        time_distribution
+            Bool: if True a end-to-end service time distribution histogram with best fit line will be computed and plotted
+             for each event log, if False general statistical values will be computed and plotted in one figure comparing
+             all event event logs
+        directory
+            String: providing the path to the folder where the event logs are located and where plots will be saved in 
+            the subfolder /statistics
+        name
+            String: prefix in the filename for the generated figures
+    Returns
+    ------------
+    Nothing
+        Generates figures and saves them to disk.
+
     """
+    directory = Path(directory)
 
     files = []
     for filename in os.listdir(directory):
@@ -36,7 +55,7 @@ def case_duration_statistics_batch( hist: bool, directory: str, vt: str):
     for file in files:
         all_case_durations_in_min = []
         log = xes_importer.apply(
-             directory + file)
+             directory / file)
         all_case_durations = case_statistics.get_all_casedurations(log, parameters={
             case_statistics.Parameters.TIMESTAMP_KEY: 'time:timestamp'})
         #add calculation of total duration from start to end -> differs a lot depending on markov chain
@@ -56,10 +75,10 @@ def case_duration_statistics_batch( hist: bool, directory: str, vt: str):
     # all_means_log = dict(sorted(all_means_log.items()))
     # all_mins_log = dict(sorted(all_mins_log.items()))
     # all_maxs_log = dict(sorted(all_maxs_log.items()))
-    if not os.path.exists(directory + 'statistics/'):
-        os.makedirs(directory + 'statistics/')
+    if not os.path.exists(directory / 'statistics/'):
+        os.makedirs(directory / 'statistics/')
 
-    if hist == 0:
+    if time_distribution == 0:
         fig = plt.figure(figsize=(10,10))
         plt.bar(range(len(all_means_log)), list(all_means_log.values()), align='center')
         plt.xticks(range(len(all_means_log)), list(all_means_log.keys()), rotation=90)
@@ -69,7 +88,7 @@ def case_duration_statistics_batch( hist: bool, directory: str, vt: str):
             plt.text(i - 0.25, np.max(list(all_means_log.values()))*0.1, str(round(v, 2)), color='white', rotation='vertical')
 
         #plt.show()
-        plt.savefig(directory + 'statistics/' + vt + 'mean_service_time.png', dpi= fig.dpi, bbox_inches='tight')
+        plt.savefig(directory / 'statistics' / (name + 'mean_service_time.png'), dpi=fig.dpi, bbox_inches='tight')
 
         fig = plt.figure(figsize=(10,10))
         plt.bar(range(len(all_mins_log)), list(all_mins_log.values()), align='center')
@@ -80,7 +99,7 @@ def case_duration_statistics_batch( hist: bool, directory: str, vt: str):
             plt.text(i - 0.25 , np.max(list(all_mins_log.values()))*0.1, str(round(v, 2)), color='white', rotation='vertical')
 
         #plt.show()
-        plt.savefig(directory + 'statistics/' + vt + 'min_service_time.png', dpi= fig.dpi, bbox_inches='tight')
+        plt.savefig(directory / 'statistics' / (name + 'min_service_time.png'), dpi=fig.dpi, bbox_inches='tight')
 
         fig = plt.figure(figsize=(10,10))
         plt.bar(range(len(all_maxs_log)), list(all_maxs_log.values()), align='center')
@@ -91,8 +110,8 @@ def case_duration_statistics_batch( hist: bool, directory: str, vt: str):
             plt.text(i - 0.25, np.max(list(all_maxs_log.values()))*0.1, str(round(v, 2)), color='white', rotation='vertical')
 
         #plt.show()
-        plt.savefig(directory + 'statistics/' + vt + 'max_service_time.png', dpi= fig.dpi, bbox_inches='tight')
-    if hist == 1:
+        plt.savefig(directory / 'statistics' / (name + 'max_service_time.png'), dpi=fig.dpi, bbox_inches='tight')
+    if time_distribution == 1:
         for file in files:
             fig, ax = plt.subplots()
             mu = all_means_log[file]
@@ -113,10 +132,34 @@ def case_duration_statistics_batch( hist: bool, directory: str, vt: str):
             # Tweak spacing to prevent clipping of ylabel
             fig.tight_layout()
             plt.show()
-            fig.savefig(directory + 'statistics/timeDist_' + vt + file + '.png')
+            fig.savefig(directory / 'statistics' / ('timeDist_' + name + file + '.png'))
 
 
-def case_duration_statistics(log, hist: bool, directory=None, vt=None):
+def case_duration_statistics(log, time_distribution: bool, directory=None, name=None):
+    """
+    This function is able to handle multiple event logs in a folder specified by the directory parameter. For each event
+    log basic statistics on end-to-end service time are computed. If time_distribution is set to True, a histogram of
+    the service time distribution is computed for each event log.
+
+     Parameters
+        --------------
+        log
+            PM4PY oevent log object
+        time_distribution
+            Bool: if True a end-to-end service time distribution histogram with best fit line will be computed and plotted
+             for each event log, if False general statistical values will be computed and plotted in one figure comparing
+             all event event logs
+        directory
+            String: providing the path to the folder where the event logs are located and where plots will be saved in
+            the subfolder /statistics
+        name
+            String: prefix in the filename for the generated figures
+    Returns
+    ------------
+    Nothing
+        Generates and stores figures with statistics
+
+    """
     all_case_durations_in_min = []
     all_case_durations = case_statistics.get_all_casedurations(log, parameters={
         case_statistics.Parameters.TIMESTAMP_KEY: 'time:timestamp'})
@@ -132,7 +175,7 @@ def case_duration_statistics(log, hist: bool, directory=None, vt=None):
     df = pd.DataFrame(values, index=[0])
     print(df)
 
-    if hist == 1:
+    if time_distribution == 1:
         #plot all case duration distribution
 
         fig, ax = plt.subplots()
@@ -149,41 +192,64 @@ def case_duration_statistics(log, hist: bool, directory=None, vt=None):
         ax.set_xticks(range(int(min), int(max), 5)) #need to be adjusted to be readable
         ax.set_xlabel('Duration in min')
         ax.set_ylabel('Probability density')
-        ax.set_title(r'Time Distribution ' + vt)
+        ax.set_title(r'Time Distribution ' + name)
 
         # Tweak spacing to prevent clipping of ylabel
         fig.tight_layout()
         plt.show()
         if directory is not None:
-            fig.savefig(directory + '/statistics/' + vt + '.png')
+            directory = Path(directory)
+            fig.savefig(directory / 'statistics' / (name + '.png'))
         else:
-            fig.savefig(vt + '.png')
+            fig.savefig(name + '.png')
 
 
-def activity_duration_statistics(log, variant=None):
+def activity_duration_statistics(log, directory: str, name=None, variant=None):
     """
     time distribution per activity
     min, max, mean (service or waiting times) per activity
     choose between waiting time(using the time passed functions from pm4py, see at the top) and service time (from pm4py.statistics.sojourn_time.log import get as soj_time_get
 
-soj_time = soj_time_get.apply(log, parameters={soj_time_get.Parameters.TIMESTAMP_KEY: "time:timestamp", soj_time_get.Parameters.START_TIMESTAMP_KEY: "start_timestamp"})
-print(soj_time)
+    soj_time = soj_time_get.apply(log, parameters={soj_time_get.Parameters.TIMESTAMP_KEY: "time:timestamp", soj_time_get.Parameters.START_TIMESTAMP_KEY: "start_timestamp"})
+    print(soj_time)
     activity_times: dict with unique activity names as keys and triple (start, end, service time in seconds) as value
     x axis: activity name
     y axis: min, max, mean or std duration,
 
-    :return:
     """
+    """
+    This function takes an event log, directory path and an optional name as input. In future releases there will be
+    different variants controlled by the variant parameter. For each activity in the event log all service times are
+    gathered, this means for all instances of the activity. Then basic statistics per activity are calculated and a 
+    resulting histogram showing the distribution of service times for each activity is computed and shown as a figure.
+
+     Parameters
+        --------------
+        log
+            PM4PY oevent log object
+        directory
+            String: providing the path to the folder where the event logs are located and where plots will be saved in
+            the subfolder /statistics
+        name
+            String: prefix in the filename for the generated figures
+    Returns
+    ------------
+    Nothing
+        Generates and stores figures with statistics
+
+    """
+
     if log is None:
         print('We need an event log.')
         return -1
-
+    if name is None:
+        name = ""
     # if variant == 'service':
     #     delta =(event['time:timestamp'] - event['start_timestamp']).total_seconds())
     # elif variant == 'waiting':
     #     delta = 0 #calculating waiting time will be added later
     #
-
+    directory = Path(directory)
     activities = []
     seen = set()
     activities_times = {}
@@ -227,3 +293,4 @@ print(soj_time)
         # Tweak spacing to prevent clipping of ylabel
         fig.tight_layout()
         plt.show()
+        fig.savefig(directory / 'statistics' / ('timeDist_' + activity + name + '.png'))
