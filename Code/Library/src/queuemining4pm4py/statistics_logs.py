@@ -174,6 +174,9 @@ print(soj_time)
 
     :return:
     """
+    if log is None:
+        print('We need an event log.')
+        return -1
 
     # if variant == 'service':
     #     delta =(event['time:timestamp'] - event['start_timestamp']).total_seconds())

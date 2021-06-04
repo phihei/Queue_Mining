@@ -2,7 +2,7 @@
 
 def analyzeServiceTimes(eventLog, serviceDict):
     """
-    Analyzes the service times of services in an event Log.
+    Analyzes the service times of activities in an event Log.
 
     :param eventLog: A PM4PY event log
     :type eventLog: pm4py.objects.log.obj.EventLog
