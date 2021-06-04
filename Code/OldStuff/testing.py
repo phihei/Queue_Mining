@@ -34,9 +34,8 @@ class Parameters(Enum):
 
 variant = xes_importer.Variants.ITERPARSE
 parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('../../logs/HospitalBillingEventLog_lifecycle.xes', variant=variant, parameters=parameters)
-activities = []
-seen = set()
+log = xes_importer.apply('../../logs/running-example_lifecycle.xes', variant=variant, parameters=parameters)
+
 
 #['NEW', 'CHANGE DIAGN', 'FIN', 'RELEASE', 'CODE OK', 'BILLED', 'DELETE', 'MANUAL', 'REOPEN', 'STORNO', 'REJECT', 'SET STATUS', 'CODE NOK', 'CHANGE END', 'JOIN-PAT', 'CODE ERROR', 'ZDBC_BEHAN', 'EMPTY']
 #view_performance_spectrum(log, ['CHANGE DIAGN', 'RELEASE', 'CODE OK'], format="svg")
@@ -53,7 +52,7 @@ Test statistics_logs
 #case_duration_statistics(log,1, name='test')
 #test
 #case_duration_statistics_batch(False, '/home/heisenB/PycharmProjects/Queue_Mining/logs/', 'test_test')
-#activity_duration_statistics(log, '/home/heisenB/PycharmProjects/Queue_Mining/logs/')
+activity_duration_statistics(log, '/home/heisenB/PycharmProjects/Queue_Mining/logs/')
 
 """"
 Add lifecycle transitions if not contained and add random service times following a normal distribution
@@ -67,7 +66,7 @@ Add lifecycle transitions if not contained and add random service times followin
 """"
 Quick overview on log
 """
-attributes = pm4py.stats.get_attributes(log)
+#attributes = pm4py.stats.get_attributes(log)
 # attribute_values = {}
 # trace_values = {}
 #     attribute_values[attr] = pm4py.stats.get_attribute_values(log, attr)
@@ -85,7 +84,7 @@ attributes = pm4py.stats.get_attributes(log)
 
 #
 # print(attribute_values)
-print(attributes)
+#print(attributes)
 # print(trace_values)
 # print(case_arival_avg)
 # print(case_start_time)

@@ -174,6 +174,9 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
         Generates and stores figures with statistics
 
     """
+    if log is None or time_distribution is None:
+        print('We need an event log and a boolean value!')
+        return -1
     all_case_durations_in_min = []
     all_case_durations = case_statistics.get_all_casedurations(log, parameters={
         case_statistics.Parameters.TIMESTAMP_KEY: 'time:timestamp'})
@@ -288,23 +291,27 @@ def activity_duration_statistics(log, directory: str, name=None, variant=None):
         max = np.max(deltas)
         std = np.std(deltas)
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(2,1)
         mu = mean
         sigma = std
 
         # the histogram of the data
-        n, bins, patches = ax.hist(deltas, bins=30, density=True)
+        n, bins, patches = ax[0].hist(deltas, bins=30, density=True)
 
         # add a 'best fit' line
         y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
              np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
-        ax.plot(bins, y, '--')
-        ax.set_xticks(range(int(min), int(max), 5))  # need to be adjusted to be readable
-        ax.set_xlabel('Duration in min')
-        ax.set_ylabel('Probability density')
-        ax.set_title(r'Time Distribution for activity: ' + activity)
-
+        ax[0].plot(bins, y, '--')
+        ax[0].set_xticks(range(int(min), int(max), 5))  # need to be adjusted to be readable
+        ax[0].set_xlabel('Duration in min')
+        ax[0].set_ylabel('Probability density')
+        ax[0].set_title(r'Time Distribution for activity: ' + activity)
+        ax[1].axis('tight')
+        ax[1].axis('off')
+        ax[1].table(cellText=[[mean], [min], [max], [std]], colLabels=['Values'], rowLabels=['mean', 'min', 'max', 'std'],
+                 loc='center')
         # Tweak spacing to prevent clipping of ylabel
         fig.tight_layout()
         plt.show()
         fig.savefig(directory / 'statistics' / ('timeDist_' + activity + name + '.png'))
+
