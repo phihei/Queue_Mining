@@ -10,16 +10,22 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../src'))
+sys.path.insert(0, os.path.abspath('../src/queuemining4pm4py'))
+sys.path.insert(0, os.path.abspath('../src/queuemining4pm4py/'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'Queue Mining for pm4py'
+project = 'queuemining4pm4py'
 copyright = '2021, Process Conformance Checking in Python (SS21) Group Queue Mining'
 author = 'Process Conformance Checking in Python (SS21) Group Queue Mining'
+
+# The full version, including alpha/beta/rc tags
+release = '0.0.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -28,6 +34,7 @@ author = 'Process Conformance Checking in Python (SS21) Group Queue Mining'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

@@ -7,33 +7,39 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
 
     :param eventLog: A PM4PY event log
     :type eventLog: pm4py.objects.log.obj.EventLog
+
     :param eventList: A List. The values of this List are either Strings, if
-    only a single Activity in the event log signalizes Arrival, or a list of
-    strings, im multiple Activities lead to customers waiting on the same service.
+        only a single Activity in the event log signalizes Arrival, or a list of
+        strings, im multiple Activities lead to customers waiting on the same service.
+
     :type eventList: list
     :param interval: Specifies the size of the intervals in which the Queue arrivals are seperated. Use a
-    datetime.timedelta object for all short timespans, and a string consisting of a (optional) (Standart: 1) number(integer)
-    and unit (either month or year) for longer timespans.
-    Note: If an edge land on a day that doesn't exist (like a 29th of non leap year feburary or 31st of april, at that point
-    the edge will move forward to the 1st of the next month, (and stay on the first of that month)
+        datetime.timedelta object for all short timespans, and a string consisting of a (optional) (Standart: 1) number(integer)
+        and unit (either month or year) for longer timespans.
+        Note: If an edge land on a day that doesn't exist (like a 29th of non leap year feburary or 31st of april, at that point
+        the edge will move forward to the 1st of the next month, (and stay on the first of that month)
+
     :type interval: datetime.timedelta or str
     :param startTime: Only Counts events after StartTime. If not specified, this will be the time of the earliest event in the event log.
     :type startTime: datetime.datetime
     :param endTime: Only Counts events before StartTime. If not specified, this will be the time of the latest event in the event log.
     :type endTime: datetime.datetime
     :param cycle: Combines diffrent repeating timeframes. Best example would be days in a week.
-    Needs to be a multiple of the interval. Use a    datetime.timedelta object for all short timespans,
-    and a string consisting of a (optional) (Standart: 1) number(integer) and unit (either month or year) for longer timespans.
-    Cycle and interval must be of the same type.
-    :type cycle datetime.timedelta or str
+        Needs to be a multiple of the interval. Use a    datetime.timedelta object for all short timespans,
+        and a string consisting of a (optional) (Standart: 1) number(integer) and unit (either month or year) for longer timespans.
+        Cycle and interval must be of the same type.
+
+    :type cycle: datetime.timedelta or str
     :param aligned: Specifies if the intervaledges should be aligned to higher units of time.
-    Note: for this to do anything, the interval must perfectly divide a higher unit of time.
-    Note: intervals specified by a datetime.timedelta, this will only align up to days, not weeks, months or years
-    As example an interval of 1 hour would always have the seperation at minute 0, instead of the minute specified in starttime.
+        Note: for this to do anything, the interval must perfectly divide a higher unit of time.
+        Note: intervals specified by a datetime.timedelta, this will only align up to days, not weeks, months or years
+        As example an interval of 1 hour would always have the seperation at minute 0, instead of the minute specified in starttime.
+
     :type aligned: bool
     :returns: A List of intervals, and how often events occured. This is the form of a list of tuples.
-    Each tuple contains as it's first element a tuple that defines the times in which an event had to occur to be counted. and the sencond value is the number of counts.
-    For cycles these are the times of the first occurence.
+        Each tuple contains as it's first element a tuple that defines the times in which an event had to occur to be counted. and the sencond value is the number of counts.
+        For cycles these are the times of the first occurence.
+
     :rtype: list
     """
 
@@ -52,7 +58,7 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
     if type(interval) != datetime.timedelta:
         if type(interval) == str:
             try:
-                intervalNumber, intervalType = parseDToS(interval)
+                intervalNumber, intervalType = __parseDToS(interval)
             except ValueError:
                 raise ValueError("Interval String is not of a correct format.")
             mode = 1
@@ -60,12 +66,12 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
             raise TypeError("The type of interval must be a string or datetime.timedelta")
 
     if startTime is None:
-        starttime = firstEventTime(eventLog)
+        starttime = __firstEventTime(eventLog)
     elif type(startTime) != datetime.datetime:
         raise TypeError("The type of startTime needs to be datetime.datetime")
 
     if endTime is None:
-        endTime = lastEventTime(eventLog)
+        endTime = __lastEventTime(eventLog)
     elif type(endTime) != datetime.datetime:
         raise TypeError("The type of endTime needs to be datetime.datetime")
 
@@ -75,7 +81,7 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
             raise TypeError("The type of cycle and intervall must be the same")
         elif type(cycle) != datetime.timedelta:
             try:
-                cycleNumber, cycleType = parseDToS(cycle)
+                cycleNumber, cycleType = __parseDToS(cycle)
             except ValueError:
                 raise ValueError("Cycle String is not of a correct format.")
             cycleMonths = cycleNumber if cycleType == "month" else cycleNumber * 12
@@ -150,7 +156,7 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
     return values
 
 
-def parseDToS(string: str):
+def __parseDToS(string: str):
     s = string.replace(" ", "")
     t = s.lstrip("0123456789")
     n = s[:-len(t)]
@@ -164,7 +170,7 @@ def parseDToS(string: str):
         return n, "year"
     raise ValueError("string incorrect")
 
-def firstEventTime(eventLog):
+def __firstEventTime(eventLog):
     earliestTime = datetime.datetime(2025, 1, 1, tzinfo=eventLog[0][0]["time:timestamp"].tzinfo)
     for trace in eventLog:
         for event in trace:
@@ -173,7 +179,7 @@ def firstEventTime(eventLog):
     return earliestTime
 
 
-def lastEventTime(eventLog):
+def __lastEventTime(eventLog):
     lastTime = datetime.datetime(1970, 1, 2, tzinfo=eventLog[0][0]["time:timestamp"].tzinfo)
     for trace in eventLog:
         for event in trace:

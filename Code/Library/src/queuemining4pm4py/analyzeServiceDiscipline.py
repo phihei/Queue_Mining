@@ -4,7 +4,7 @@ def analyzeServiceDiscipline(eventLog, queueDict):
     Analyzes the service discipline of events in an event Log.
 
     :param eventLog: A PM4PY event log
-    :type eventLog: pm4py.objects.log.obj.EventLog
+    :type eventLog: str
     :param queueDict: A dictionary. The values of this dictionary are 2-Tuples,
     whos values are either strings or lists of strings, corresponding to
     activities from the event log. The first value of the tuple corresponds to events
