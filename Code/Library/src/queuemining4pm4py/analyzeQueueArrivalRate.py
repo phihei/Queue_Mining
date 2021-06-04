@@ -25,7 +25,7 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
     Needs to be a multiple of the interval. Use a    datetime.timedelta object for all short timespans,
     and a string consisting of a (optional) (Standart: 1) number(integer) and unit (either month or year) for longer timespans.
     Cycle and interval must be of the same type.
-    :type datetime.timedelta or str
+    :type cycle datetime.timedelta or str
     :param aligned: Specifies if the intervaledges should be aligned to higher units of time.
     Note: for this to do anything, the interval must perfectly divide a higher unit of time.
     Note: intervals specified by a datetime.timedelta, this will only align up to days, not weeks, months or years
@@ -71,27 +71,19 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
 
     intervalsinCycle = 0
     if cycle is not None:
-        if type(cycle) != datetime.timedelta:
-            if type(cycle) == str:
-                try:
-                    cycleNumber, cycleType = parseDToS(cycle)
-                except ValueError:
-                    raise ValueError("Cycle String is not of a correct format.")
-                if mode == 0:
-                    raise TypeError("The type of cycle and intervall must be the same")
-                else:
-                    if cycleType == "week":
-                        raise ValueError("The cycle must be a multiple of the interval")
-                    cycleMonths = cycleNumber if cycleType == "month" else cycleNumber * 12
-                    intervalMonths = intervalNumber if intervalType == "month" else intervalNumber * 12
-                    if cycleMonths % intervalMonths != 0:
-                        raise ValueError("The cycle must be a multiple of the interval")
-                    intervalsinCycle = cycleMonths // intervalMonths
-            else:
-                raise TypeError("The type of cycle must be a string or datetime.timedelta")
+        if type(cycle) != type(interval):
+            raise TypeError("The type of cycle and intervall must be the same")
+        elif type(cycle) != datetime.timedelta:
+            try:
+                cycleNumber, cycleType = parseDToS(cycle)
+            except ValueError:
+                raise ValueError("Cycle String is not of a correct format.")
+            cycleMonths = cycleNumber if cycleType == "month" else cycleNumber * 12
+            intervalMonths = intervalNumber if intervalType == "month" else intervalNumber * 12
+            if intervalMonths % cycleMonths != 0:
+                raise ValueError("The cycle must be a multiple of the interval")
+            intervalsinCycle = intervalMonths // cycleMonths
         else:
-            if type(interval) != datetime.timedelta:
-                raise TypeError("The type of cycle and intervall must be the same")
             if interval % cycle != 0:
                 raise ValueError("The cycle must be a multiple of the interval")
             intervalsinCycle = interval // cycle
@@ -158,9 +150,10 @@ def analyzeQueueArrivalRate(eventLog, eventList, interval, startTime=None, endTi
     return values
 
 
-def parseDToS(string):
-    t = string.lstrip("0123456789")
-    n = string[:-len(t)]
+def parseDToS(string: str):
+    s = string.replace(" ", "")
+    t = s.lstrip("0123456789")
+    n = s[:-len(t)]
     if n == "":
         n = 1
     else:
