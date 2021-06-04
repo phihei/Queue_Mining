@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>queuemining4pm4py package &#8212; queuemining4pm4py 0.0.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="queuemining4pm4py" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="queuemining4pm4py-package">
+<h1>queuemining4pm4py package<a class="headerlink" href="#queuemining4pm4py-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-queuemining4pm4py.analyzeQueueArrivalRate">
+<span id="queuemining4pm4py-analyzequeuearrivalrate-module"></span><h2>queuemining4pm4py.analyzeQueueArrivalRate module<a class="headerlink" href="#module-queuemining4pm4py.analyzeQueueArrivalRate" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="queuemining4pm4py.analyzeQueueArrivalRate.analyzeQueueArrivalRate">
+<span class="sig-prename descclassname"><span class="pre">queuemining4pm4py.analyzeQueueArrivalRate.</span></span><span class="sig-name descname"><span class="pre">analyzeQueueArrivalRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventLog</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eventList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startTime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endTime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aligned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#queuemining4pm4py.analyzeQueueArrivalRate.analyzeQueueArrivalRate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes the Arrival times customers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eventLog</strong> (<em>pm4py.objects.log.obj.EventLog</em>) – A PM4PY event log</p></li>
+<li><p><strong>eventList</strong> (<em>list</em>) – A List. The values of this List are either Strings, if
+only a single Activity in the event log signalizes Arrival, or a list of
+strings, im multiple Activities lead to customers waiting on the same service.</p></li>
+<li><p><strong>interval</strong> (<em>datetime.timedelta</em><em> or </em><em>str</em>) – Specifies the size of the intervals in which the Queue arrivals are seperated. Use a
+datetime.timedelta object for all short timespans, and a string consisting of a (optional) (Standart: 1) number(integer)
+and unit (either month or year) for longer timespans.
+Note: If an edge land on a day that doesn’t exist (like a 29th of non leap year feburary or 31st of april, at that point
+the edge will move forward to the 1st of the next month, (and stay on the first of that month)</p></li>
+<li><p><strong>startTime</strong> (<em>datetime.datetime</em>) – Only Counts events after StartTime. If not specified, this will be the time of the earliest event in the event log.</p></li>
+<li><p><strong>endTime</strong> (<em>datetime.datetime</em>) – Only Counts events before StartTime. If not specified, this will be the time of the latest event in the event log.</p></li>
+<li><p><strong>cycle</strong> (<em>datetime.timedelta</em><em> or </em><em>str</em>) – Combines diffrent repeating timeframes. Best example would be days in a week.
+Needs to be a multiple of the interval. Use a    datetime.timedelta object for all short timespans,
+and a string consisting of a (optional) (Standart: 1) number(integer) and unit (either month or year) for longer timespans.
+Cycle and interval must be of the same type.</p></li>
+<li><p><strong>aligned</strong> (<em>bool</em>) – Specifies if the intervaledges should be aligned to higher units of time.
+Note: for this to do anything, the interval must perfectly divide a higher unit of time.
+Note: intervals specified by a datetime.timedelta, this will only align up to days, not weeks, months or years
+As example an interval of 1 hour would always have the seperation at minute 0, instead of the minute specified in starttime.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A List of intervals, and how often events occured. This is the form of a list of tuples.
+Each tuple contains as it’s first element a tuple that defines the times in which an event had to occur to be counted. and the sencond value is the number of counts.
+For cycles these are the times of the first occurence.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-queuemining4pm4py.analyzeServiceDiscipline">
+<span id="queuemining4pm4py-analyzeservicediscipline-module"></span><h2>queuemining4pm4py.analyzeServiceDiscipline module<a class="headerlink" href="#module-queuemining4pm4py.analyzeServiceDiscipline" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="queuemining4pm4py.analyzeServiceDiscipline.analyzeServiceDiscipline">
+<span class="sig-prename descclassname"><span class="pre">queuemining4pm4py.analyzeServiceDiscipline.</span></span><span class="sig-name descname"><span class="pre">analyzeServiceDiscipline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventLog</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queueDict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#queuemining4pm4py.analyzeServiceDiscipline.analyzeServiceDiscipline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes the service discipline of events in an event Log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eventLog</strong> (<em>pm4py.objects.log.obj.EventLog</em>) – A PM4PY event log</p></li>
+<li><p><strong>queueDict</strong> (<em>dict</em>) – A dictionary. The values of this dictionary are 2-Tuples,
+whos values are either strings or lists of strings, corresponding to
+activities from the event log. The first value of the tuple corresponds to events
+after which the case is available for servicing, the 2nd value of the tuple
+corresponds to events that signal that the case has begun servicing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with the same keys as queueDict, with the values being
+n-Tuples of floats that correspond to percentages for adherance to diffrent
+potential Service Disciplines (FIFO-Adherance, LIFO-Adherance, other)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="queuemining4pm4py-analyzeservicetimes-module">
+<h2>queuemining4pm4py.analyzeServiceTimes module<a class="headerlink" href="#queuemining4pm4py-analyzeservicetimes-module" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-queuemining4pm4py.statistics_logs">
+<span id="queuemining4pm4py-statistics-logs-module"></span><h2>queuemining4pm4py.statistics_logs module<a class="headerlink" href="#module-queuemining4pm4py.statistics_logs" title="Permalink to this headline">¶</a></h2>
+<p>”
+from pm4py.stats get_case_arrival_average(log: Union[EventLog, pd.DataFrame])
+/home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/attributes/log/get.py
+/home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/passed_time/log</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="queuemining4pm4py.statistics_logs.activity_duration_statistics">
+<span class="sig-prename descclassname"><span class="pre">queuemining4pm4py.statistics_logs.</span></span><span class="sig-name descname"><span class="pre">activity_duration_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#queuemining4pm4py.statistics_logs.activity_duration_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>time distribution per activity
+min, max, mean (service or waiting times) per activity
+choose between waiting time(using the time passed functions from pm4py, see at the top) and service time (from pm4py.statistics.sojourn_time.log import get as soj_time_get</p>
+</div></blockquote>
+<p>soj_time = soj_time_get.apply(log, parameters={soj_time_get.Parameters.TIMESTAMP_KEY: “time:timestamp”, soj_time_get.Parameters.START_TIMESTAMP_KEY: “start_timestamp”})
+print(soj_time)</p>
+<blockquote>
+<div><p>activity_times: dict with unique activity names as keys and triple (start, end, service time in seconds) as value
+x axis: activity name
+y axis: min, max, mean or std duration,</p>
+<dl class="field-list simple">
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="queuemining4pm4py.statistics_logs.case_duration_statistics">
+<span class="sig-prename descclassname"><span class="pre">queuemining4pm4py.statistics_logs.</span></span><span class="sig-name descname"><span class="pre">case_duration_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hist</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#queuemining4pm4py.statistics_logs.case_duration_statistics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="queuemining4pm4py.statistics_logs.case_duration_statistics_batch">
+<span class="sig-prename descclassname"><span class="pre">queuemining4pm4py.statistics_logs.</span></span><span class="sig-name descname"><span class="pre">case_duration_statistics_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hist</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vt</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#queuemining4pm4py.statistics_logs.case_duration_statistics_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>directory format “/home/myproject/”
+vt =  Provide a suitable name for the output file
+hist = ‘Enter 0, if you want general duration statistics about all event logs , Enter 1 if you want a time’</p>
+<blockquote>
+<div><p>‘distribution for each event log’</p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="module-queuemining4pm4py.xes_to_nx_utilities">
+<span id="queuemining4pm4py-xes-to-nx-utilities-module"></span><h2>queuemining4pm4py.xes_to_nx_utilities module<a class="headerlink" href="#module-queuemining4pm4py.xes_to_nx_utilities" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="queuemining4pm4py.xes_to_nx_utilities.transform_dfg_to_directed_nx_graph">
+<span class="sig-prename descclassname"><span class="pre">queuemining4pm4py.xes_to_nx_utilities.</span></span><span class="sig-name descname"><span class="pre">transform_dfg_to_directed_nx_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">networkx.classes.digraph.DiGraph</span><a class="headerlink" href="#queuemining4pm4py.xes_to_nx_utilities.transform_dfg_to_directed_nx_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform DFG to directed NetworkX graph</p>
+<dl class="simple">
+<dt>G</dt><dd><p>NetworkX digraph</p>
+</dd>
+<dt>nodes_map</dt><dd><p>Correspondence between digraph nodes and activities</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="queuemining4pm4py.xes_to_nx_utilities.transform_xes_log_to_nxDiGraph">
+<span class="sig-prename descclassname"><span class="pre">queuemining4pm4py.xes_to_nx_utilities.</span></span><span class="sig-name descname"><span class="pre">transform_xes_log_to_nxDiGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dfg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integer_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">networkx.classes.digraph.DiGraph</span><a class="headerlink" href="#queuemining4pm4py.xes_to_nx_utilities.transform_xes_log_to_nxDiGraph" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-queuemining4pm4py">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-queuemining4pm4py" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">queuemining4pm4py</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">queuemining4pm4py</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">queuemining4pm4py package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">queuemining4pm4py</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">queuemining4pm4py</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Process Conformance Checking in Python (SS21) Group Queue Mining.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/queuemining4pm4py.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
