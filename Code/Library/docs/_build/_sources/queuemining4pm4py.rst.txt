@@ -20,14 +20,6 @@ queuemining4pm4py.analyzeServiceDiscipline module
    :undoc-members:
    :show-inheritance:
 
-queuemining4pm4py.analyzeServiceTimes module
---------------------------------------------
-
-.. automodule:: queuemining4pm4py.analyzeServiceTimes
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 queuemining4pm4py.statistics\_logs module
 -----------------------------------------
 

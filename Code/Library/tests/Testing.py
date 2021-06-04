@@ -5,6 +5,13 @@ import warnings
 import datetime
 
 
+import pm4py
+
+from pm4py.objects.log.importer.xes import importer as xes_importer
+from pm4py.util import exec_utils, constants
+from datetime import datetime, timedelta
+from enum import Enum
+
 class TestAnalysisQueueArrivalRate(unittest.TestCase):
 
     def test_analysisQueueArrivalRate_for_ValueErrors(self):
@@ -69,3 +76,19 @@ class TestAnalysisQueueArrivalRate(unittest.TestCase):
 
 if __name__ == '__main__':
     pass
+
+
+
+class Parameters(Enum):
+    ATTRIBUTE_KEY = constants.PARAMETER_CONSTANT_ATTRIBUTE_KEY
+    ACTIVITY_KEY = constants.PARAMETER_CONSTANT_ACTIVITY_KEY
+    TIMESTAMP_KEY = constants.PARAMETER_CONSTANT_TIMESTAMP_KEY
+    CASE_ID_KEY = constants.PARAMETER_CONSTANT_CASEID_KEY
+
+
+variant = xes_importer.Variants.ITERPARSE
+parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
+log = xes_importer.apply('e.xes', variant=variant, parameters=parameters)
+
+# print(log)
+pm4py.view_performance_spectrum(log, ['register request','examine casually','check ticket','decide'], format="svg")

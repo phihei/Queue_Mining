@@ -25,7 +25,7 @@ copyright = '2021, Process Conformance Checking in Python (SS21) Group Queue Min
 author = 'Process Conformance Checking in Python (SS21) Group Queue Mining'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.2'
+release = '0.1'
 
 
 # -- General configuration ---------------------------------------------------

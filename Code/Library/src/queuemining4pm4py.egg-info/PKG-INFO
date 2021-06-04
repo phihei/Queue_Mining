@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: queuemining4pm4py
-Version: 0.0.2
+Version: 0.1
 Summary: Implements some queue mining functionality, intended to be used with PM4PY
 Home-page: https://github.com/phihei/Queue_Mining
 Author: Process Conformance Checking in Python (SS21) Group Queue Mining

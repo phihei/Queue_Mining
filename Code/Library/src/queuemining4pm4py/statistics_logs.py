@@ -1,8 +1,7 @@
-""""
-from pm4py.stats get_case_arrival_average(log: Union[EventLog, pd.DataFrame])
-/home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/attributes/log/get.py
-/home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/passed_time/log
-"""
+
+# from pm4py.stats get_case_arrival_average(log: Union[EventLog, pd.DataFrame])
+# /home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/attributes/log/get.py
+# /home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/passed_time/log
 
 import numpy as np
 import os
@@ -20,22 +19,14 @@ def case_duration_statistics_batch(time_distribution: bool, directory: str, name
     True, a histogram of the service time distribution is computed for each event log. All figures are then saved as
     .png in a (new) subfolder called "statistics" under the given directory.
 
-     Parameters
-        --------------
-        time_distribution
-            Bool: if True a end-to-end service time distribution histogram with best fit line will be computed and plotted
+    :param time_distribution:  Bool: if True a end-to-end service time distribution histogram with best fit line will be computed and plotted
              for each event log, if False general statistical values will be computed and plotted in one figure comparing
              all event event logs
-        directory
-            String: providing the path to the folder where the event logs are located and where plots will be saved in 
+    :param directory: String: providing the path to the folder where the event logs are located and where plots will be saved in
             the subfolder /statistics
-        name
-            String: prefix in the filename for the generated figures
-    Returns
-    ------------
-    Nothing
+    :param name: String: prefix in the filename for the generated figures
+    :return: Nothing
         Generates figures and saves them to disk.
-
     """
     directory = Path(directory)
 
@@ -155,24 +146,15 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
     log basic statistics on end-to-end service time are computed. If time_distribution is set to True, a histogram of
     the service time distribution is computed for each event log.
 
-     Parameters
-        --------------
-        log
-            PM4PY oevent log object
-        time_distribution
-            Bool: if True a end-to-end service time distribution histogram with best fit line will be computed and plotted
+    :param log: PM4PY oevent log object
+    :param time_distribution: Bool: if True a end-to-end service time distribution histogram with best fit line will be computed and plotted
              for each event log, if False general statistical values will be computed and plotted in one figure comparing
              all event event logs
-        directory
-            String: providing the path to the folder where the event logs are located and where plots will be saved in
+    :param directory: String: providing the path to the folder where the event logs are located and where plots will be saved in
             the subfolder /statistics
-        name
-            String: prefix in the filename for the generated figures
-    Returns
-    ------------
-    Nothing
+    :param name:  String: prefix in the filename for the generated figures
+    :return: Nothing
         Generates and stores figures with statistics
-
     """
     if log is None or time_distribution is None:
         print('We need an event log and a boolean value!')
@@ -223,39 +205,19 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
 
 def activity_duration_statistics(log, directory: str, name=None, variant=None):
     """
-    time distribution per activity
-    min, max, mean (service or waiting times) per activity
-    choose between waiting time(using the time passed functions from pm4py, see at the top) and service time (from pm4py.statistics.sojourn_time.log import get as soj_time_get
-
-    soj_time = soj_time_get.apply(log, parameters={soj_time_get.Parameters.TIMESTAMP_KEY: "time:timestamp", soj_time_get.Parameters.START_TIMESTAMP_KEY: "start_timestamp"})
-    print(soj_time)
-    activity_times: dict with unique activity names as keys and triple (start, end, service time in seconds) as value
-    x axis: activity name
-    y axis: min, max, mean or std duration,
-
-    """
-    """
     This function takes an event log, directory path and an optional name as input. In future releases there will be
     different variants controlled by the variant parameter. For each activity in the event log all service times are
-    gathered, this means for all instances of the activity. Then basic statistics per activity are calculated and a 
+    gathered, this means for all instances of the activity. Then basic statistics per activity are calculated and a
     resulting histogram showing the distribution of service times for each activity is computed and shown as a figure.
 
-     Parameters
-        --------------
-        log
-            PM4PY oevent log object
-        directory
-            String: providing the path to the folder where the event logs are located and where plots will be saved in
+    :param log: PM4PY oevent log object
+    :param directory: String: providing the path to the folder where the event logs are located and where plots will be saved in
             the subfolder /statistics
-        name
-            String: prefix in the filename for the generated figures
-    Returns
-    ------------
-    Nothing
+    :param name: String: prefix in the filename for the generated figures
+    :param variant: Not used yet.
+    :return: Nothing
         Generates and stores figures with statistics
-
     """
-
     if log is None:
         print('We need an event log.')
         return -1

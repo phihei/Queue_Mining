@@ -2,6 +2,7 @@
 def analyzeServiceDiscipline(eventLog, queueDict):
     """
     Analyzes the service discipline of events in an event Log.
+    THIS IS STILL EMPTY AND ONLY RETURNS -1 AT THE MOMENT.
 
     :param eventLog: A PM4PY event log
     :type eventLog: pm4py.objects.log.obj.EventLog

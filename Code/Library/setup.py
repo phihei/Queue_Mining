@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="queuemining4pm4py",
-    version="0.0.2",
+    version="0.1",
     author="Process Conformance Checking in Python (SS21) Group Queue Mining",
     description="Implements some queue mining functionality, intended to be used with PM4PY",
     long_description=long_description,
