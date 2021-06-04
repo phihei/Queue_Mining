@@ -88,47 +88,28 @@ For cycles these are the times of the first occurence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>eventLog</strong> (<em>str</em>) – A PM4PY event log</p></li>
-<li><p><strong>queueDict</strong> – A dictionary. The values of this dictionary are 2-Tuples,</p></li>
-</ul>
-</dd>
-</dl>
-<p>whos values are either strings or lists of strings, corresponding to
+<li><p><strong>eventLog</strong> (<em>pm4py.objects.log.obj.EventLog</em>) – A PM4PY event log</p></li>
+<li><p><strong>queueDict</strong> (<em>dict</em>) – A dictionary. The values of this dictionary are 2-Tuples,
+whos values are either strings or lists of strings, corresponding to
 activities from the event log. The first value of the tuple corresponds to events
 after which the case is available for servicing, the 2nd value of the tuple
-corresponds to events that signal that the case has begun servicing.
-:type queueDict: dict
-:returns: A dictionary with the same keys as queueDict, with the values being
+corresponds to events that signal that the case has begun servicing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary with the same keys as queueDict, with the values being
 n-Tuples of floats that correspond to percentages for adherance to diffrent
-potential Service Disciplines (FIFO-Adherance, LIFO-Adherance, other)
-TODO define which Service Disciplines we are testing for
-:rtype: tuple</p>
+potential Service Disciplines (FIFO-Adherance, LIFO-Adherance, other)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
-<section id="module-queuemining4pm4py.analyzeServiceTimes">
-<span id="queuemining4pm4py-analyzeservicetimes-module"></span><h2>queuemining4pm4py.analyzeServiceTimes module<a class="headerlink" href="#module-queuemining4pm4py.analyzeServiceTimes" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="queuemining4pm4py.analyzeServiceTimes.analyzeServiceTimes">
-<span class="sig-prename descclassname"><span class="pre">queuemining4pm4py.analyzeServiceTimes.</span></span><span class="sig-name descname"><span class="pre">analyzeServiceTimes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eventLog</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serviceDict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#queuemining4pm4py.analyzeServiceTimes.analyzeServiceTimes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Analyzes the service times of services in an event Log.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>eventLog</strong> (<em>pm4py.objects.log.obj.EventLog</em>) – A PM4PY event log</p></li>
-<li><p><strong>serviceDict</strong> – A dictionary. The values of this dictionary are 2-Tuples,</p></li>
-</ul>
-</dd>
-</dl>
-<p>whos values are either strings or lists of strings, corresponding to
-activities from the event log. The first value of the tuple corresponds to events
-that occur at the beginning of servicing, the 2nd value of the tuple
-corresponds to events that signal that the case has finished servicing.
-:type serviceDict: dict
-:returns: TODO find good way to represent this
-:rtype:</p>
-</dd></dl>
-
+<section id="queuemining4pm4py-analyzeservicetimes-module">
+<h2>queuemining4pm4py.analyzeServiceTimes module<a class="headerlink" href="#queuemining4pm4py-analyzeservicetimes-module" title="Permalink to this headline">¶</a></h2>
 </section>
 <section id="module-queuemining4pm4py.statistics_logs">
 <span id="queuemining4pm4py-statistics-logs-module"></span><h2>queuemining4pm4py.statistics_logs module<a class="headerlink" href="#module-queuemining4pm4py.statistics_logs" title="Permalink to this headline">¶</a></h2>
