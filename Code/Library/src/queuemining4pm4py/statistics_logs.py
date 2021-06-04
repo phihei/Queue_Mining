@@ -16,9 +16,9 @@ from pm4py.statistics.traces.log import case_statistics
 def case_duration_statistics_batch(time_distribution: bool, directory: str, name: str):
     """
     This function is able to handle multiple event logs in a folder specified by the directory parameter. For each event
-    log basic statistics on end-to-end service time are computed. If time_distribution is set to True, a histogram of
-    the service time distribution is computed for each event log. All figures are then saved as .ong in a (new) subfolder
-    called "statistics" under the given directory.
+    log basic statistics (min, max, mean and std) on end-to-end service time are computed. If time_distribution is set to
+    True, a histogram of the service time distribution is computed for each event log. All figures are then saved as
+    .png in a (new) subfolder called "statistics" under the given directory.
 
      Parameters
         --------------
@@ -111,6 +111,20 @@ def case_duration_statistics_batch(time_distribution: bool, directory: str, name
 
         #plt.show()
         plt.savefig(directory / 'statistics' / (name + 'max_service_time.png'), dpi=fig.dpi, bbox_inches='tight')
+
+        fig = plt.figure(figsize=(10, 10))
+        plt.bar(range(len(all_stds_log)), list(all_stds_log.values()), align='center')
+        plt.xticks(range(len(all_stds_log)), list(all_stds_log.keys()), rotation=90)
+        plt.title('Standard Deviation Service Time')
+        plt.ylabel('Service Time in Minutes')
+        for i, v in enumerate(list(all_stds_log.values())):
+            plt.text(i - 0.25, np.max(list(all_stds_log.values())) * 0.1, str(round(v, 2)), color='white',
+                     rotation='vertical')
+
+        # plt.show()
+        plt.savefig(directory / 'statistics' / (name + 'std_service_time.png'), dpi=fig.dpi, bbox_inches='tight')
+
+
     if time_distribution == 1:
         for file in files:
             fig, ax = plt.subplots()
