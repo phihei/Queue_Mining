@@ -34,7 +34,7 @@ class Parameters(Enum):
 
 variant = xes_importer.Variants.ITERPARSE
 parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('../../logs/running-example_lifecycle.xes', variant=variant, parameters=parameters)
+log = xes_importer.apply('../../logs/HospitalBillingEventLog_lifecycle.xes', variant=variant, parameters=parameters)
 
 
 #['NEW', 'CHANGE DIAGN', 'FIN', 'RELEASE', 'CODE OK', 'BILLED', 'DELETE', 'MANUAL', 'REOPEN', 'STORNO', 'REJECT', 'SET STATUS', 'CODE NOK', 'CHANGE END', 'JOIN-PAT', 'CODE ERROR', 'ZDBC_BEHAN', 'EMPTY']
@@ -122,7 +122,7 @@ Quick overview on log
 #
 # print(waiting_times)
 test = activity_waiting_time(log, statistics=True)
-print(test)
+
 #activities_times = dict.fromkeys(activities, [])
 
 # for activity in activities_times:

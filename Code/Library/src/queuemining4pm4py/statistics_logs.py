@@ -189,7 +189,8 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
         y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
              np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
         ax.plot(bins, y, '--')
-        ax.set_xticks(range(int(min), int(max), int(np.mean(list(bins))))) #need to be adjusted to be readable
+        ax.set_xticks(bins) #need to be adjusted to be readable
+        ax[0].tick_params(rotation=45)
         ax.set_xlabel('Duration in min')
         ax.set_ylabel('Probability density')
         ax.set_title(r'Time Distribution ' + name)
@@ -265,7 +266,8 @@ def activity_duration_statistics(log, directory: str, name=None, variant=None):
         y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
              np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
         ax[0].plot(bins, y, '--')
-        ax[0].set_xticks(range(int(min), int(max), int(np.mean(list(bins)))))  # need to be adjusted to be readable
+        ax[0].set_xticks(bins)  # need to be adjusted to be readable
+        ax[0].tick_params(rotation=45)
         ax[0].set_xlabel('Duration in min')
         ax[0].set_ylabel('Probability density')
         ax[0].set_title(r'Service Time Distribution for activity: ' + activity)
@@ -310,14 +312,12 @@ def activity_waiting_time(log, statistics=False):
 
             # the histogram of the data
             n, bins, patches = ax[0].hist(deltas, bins=30, density=True)
-            bin_edges = [int(i) for i in np.histogram_bin_edges(deltas, bins=30)]
+
             # add a 'best fit' line
-            y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
-                 np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
+            y = ((1 / (np.sqrt(2 * np.pi) * sigma)) * np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
             ax[0].plot(bins, y, '--')
-            ax[0].set_xticks(bin_edges)  # need to be adjusted to be readable
+            ax[0].set_xticks(bins)  # need to be adjusted to be readable
             ax[0].tick_params(rotation=45)
-            #ax[0].set_xticks(bin_edges)
             ax[0].set_xlabel('Waiting Time in min')
             ax[0].set_ylabel('Probability density')
             ax[0].set_title(r'Waiting Time Distribution for activity: ' + activity)
