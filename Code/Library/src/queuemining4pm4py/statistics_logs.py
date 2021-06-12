@@ -2,6 +2,7 @@
 # from pm4py.stats get_case_arrival_average(log: Union[EventLog, pd.DataFrame])
 # /home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/attributes/log/get.py
 # /home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/passed_time/log
+import pkgutil
 
 import numpy as np
 import os
@@ -10,7 +11,7 @@ import pandas as pd
 from pathlib import Path
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.statistics.traces.log import case_statistics
-
+from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 
 def case_duration_statistics_batch(time_distribution: bool, directory: str, name: str):
     """
@@ -188,7 +189,7 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
         y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
              np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
         ax.plot(bins, y, '--')
-        ax.set_xticks(range(int(min), int(max), 5)) #need to be adjusted to be readable
+        ax.set_xticks(range(int(min), int(max), int(np.mean(list(bins))))) #need to be adjusted to be readable
         ax.set_xlabel('Duration in min')
         ax.set_ylabel('Probability density')
         ax.set_title(r'Time Distribution ' + name)
@@ -247,7 +248,7 @@ def activity_duration_statistics(log, directory: str, name=None, variant=None):
                             event['time:timestamp'] - event['start_timestamp']).total_seconds()))
 
     for activity in activities_times:
-        deltas = [x for triple in activities_times[activity] for x in triple[-1:]]
+        deltas = [x/60 for triple in activities_times[activity] for x in triple[-1:]]
         mean = np.mean(deltas)
         min = np.min(deltas)
         max = np.max(deltas)
@@ -264,10 +265,10 @@ def activity_duration_statistics(log, directory: str, name=None, variant=None):
         y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
              np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
         ax[0].plot(bins, y, '--')
-        ax[0].set_xticks(range(int(min), int(max), 5))  # need to be adjusted to be readable
+        ax[0].set_xticks(range(int(min), int(max), int(np.mean(list(bins)))))  # need to be adjusted to be readable
         ax[0].set_xlabel('Duration in min')
         ax[0].set_ylabel('Probability density')
-        ax[0].set_title(r'Time Distribution for activity: ' + activity)
+        ax[0].set_title(r'Service Time Distribution for activity: ' + activity)
         ax[1].axis('tight')
         ax[1].axis('off')
         ax[1].table(cellText=[[mean], [min], [max], [std]], colLabels=['Values'], rowLabels=['mean', 'min', 'max', 'std'],
@@ -276,4 +277,57 @@ def activity_duration_statistics(log, directory: str, name=None, variant=None):
         fig.tight_layout()
         plt.show()
         fig.savefig(directory / 'statistics' / ('timeDist_' + activity + name + '.png'))
+
+
+def activity_waiting_time(log, statistics=False):
+    dfg = dfg_discovery.apply(log)  # contains activity pairs that directly-follow, use them to calculate waiting times
+    df_activities = dfg.keys()
+    waiting_times = {}
+    seen = set()
+    for trace in log:
+        for i in range(len(trace) - 2):
+            if trace[i + 1]['concept:name'] not in seen:
+                seen.add(trace[i + 1]['concept:name'])
+                waiting_times[trace[i + 1]['concept:name']] = []
+            if (trace[i]['concept:name'], trace[i + 1]['concept:name']) in df_activities and (
+                    (trace[i + 1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds() > 0):
+                waiting_times[trace[i + 1]['concept:name']].append(
+                    ((trace[i + 1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds())/60)
+
+    if not statistics:
+        return waiting_times
+    else:
+        for activity in waiting_times:
+            deltas = waiting_times[activity]
+            mean = np.mean(deltas)
+            min = np.min(deltas)
+            max = np.max(deltas)
+            std = np.std(deltas)
+
+            fig, ax = plt.subplots(2, 1)
+            mu = mean
+            sigma = std
+
+            # the histogram of the data
+            n, bins, patches = ax[0].hist(deltas, bins=30, density=True)
+            bin_edges = [int(i) for i in np.histogram_bin_edges(deltas, bins=30)]
+            # add a 'best fit' line
+            y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
+                 np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
+            ax[0].plot(bins, y, '--')
+            ax[0].set_xticks(bin_edges)  # need to be adjusted to be readable
+            ax[0].tick_params(rotation=45)
+            #ax[0].set_xticks(bin_edges)
+            ax[0].set_xlabel('Waiting Time in min')
+            ax[0].set_ylabel('Probability density')
+            ax[0].set_title(r'Waiting Time Distribution for activity: ' + activity)
+            ax[1].axis('tight')
+            ax[1].axis('off')
+            ax[1].table(cellText=[[mean], [min], [max], [std]], colLabels=['Values'], rowLabels=['mean', 'min', 'max', 'std'],
+                        loc='center')
+            # Tweak spacing to prevent clipping of ylabel
+            fig.tight_layout()
+            plt.show()
+            #fig.savefig(directory / 'statistics' / ('timeDist_' + activity + name + '.png'))
+        return waiting_times
 

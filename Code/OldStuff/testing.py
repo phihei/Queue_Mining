@@ -21,7 +21,7 @@ from pm4py.objects.log.exporter.xes import exporter as xes_expoter
 from enum import Enum
 from pathlib import Path
 from pm4py import view_performance_spectrum
-
+from pm4py.algo.discovery.temporal_profile import algorithm as temporal_profile_discovery
 from Code.Library.src.queuemining4pm4py import xes_to_nx_utilities
 
 
@@ -52,7 +52,7 @@ Test statistics_logs
 #case_duration_statistics(log,1, name='test')
 #test
 #case_duration_statistics_batch(False, '/home/heisenB/PycharmProjects/Queue_Mining/logs/', 'test_test')
-activity_duration_statistics(log, '/home/heisenB/PycharmProjects/Queue_Mining/logs/')
+#activity_duration_statistics(log, '/home/heisenB/PycharmProjects/Queue_Mining/logs/')
 
 """"
 Add lifecycle transitions if not contained and add random service times following a normal distribution
@@ -100,14 +100,31 @@ Quick overview on log
 #             seen.add(event['concept:name'])
 #             activities.append(event['concept:name'])
 #             activities_times[event['concept:name']] = []
-#         if isinstance(activities_times[event['concept:name']], list):
-#             activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (event['time:timestamp']-event['start_timestamp']).total_seconds()))
-#         else:
-#             activities_times[event['concept:name']] = []
-#             activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (event['time:timestamp']-event['start_timestamp']).total_seconds()))
+        # if isinstance(activities_times[event['concept:name']], list):
+        #     activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (event['time:timestamp']-event['start_timestamp']).total_seconds()))
+        # else:
+        #     activities_times[event['concept:name']] = []
+        #     activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (event['time:timestamp']-event['start_timestamp']).total_seconds()))
+
+# temporal_profile = temporal_profile_discovery.apply(log, parameters={})
+# print(temporal_profile)
+# dfg = dfg_discovery.apply(log) #contains activity pairs that directly-follow, use them to calculate waiting times
+# df_activities = dfg.keys()
+# waiting_times = {}
+# seen = set()
+# for trace in log:
+#     for i in range(len(trace)-2):
+#         if trace[i+1]['concept:name'] not in seen:
+#             seen.add(trace[i+1]['concept:name'])
+#             waiting_times[trace[i+1]['concept:name']] = []
+#         if (trace[i]['concept:name'], trace[i+1]['concept:name']) in df_activities and ((trace[i+1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds() > 0):
+#             waiting_times[trace[i+1]['concept:name']].append((trace[i+1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds())
 #
-# #activities_times = dict.fromkeys(activities, [])
-#
+# print(waiting_times)
+test = activity_waiting_time(log, statistics=True)
+print(test)
+#activities_times = dict.fromkeys(activities, [])
+
 # for activity in activities_times:
 #     deltas = [x for triple in activities_times[activity] for x in triple[-1:]]
 #     mean = np.mean(deltas)
