@@ -205,10 +205,9 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
             fig.savefig(name + '.png')
 
 
-def activity_duration_statistics(log, directory: str, name=None, variant=None):
+def activity_duration_statistics(log, directory: str, name=None):
     """
-    This function takes an event log, directory path and an optional name as input. In future releases there will be
-    different variants controlled by the variant parameter. For each activity in the event log all service times are
+    This function takes an event log, directory path and an optional name as input. For each activity in the event log all service times are
     gathered, this means for all instances of the activity. Then basic statistics per activity are calculated and a
     resulting histogram showing the distribution of service times for each activity is computed and shown as a figure.
 
@@ -216,7 +215,6 @@ def activity_duration_statistics(log, directory: str, name=None, variant=None):
     :param directory: String: providing the path to the folder where the event logs are located and where plots will be saved in
             the subfolder /statistics
     :param name: String: prefix in the filename for the generated figures
-    :param variant: Not used yet.
     :return: Nothing
         Generates and stores figures with statistics
     """
@@ -282,6 +280,18 @@ def activity_duration_statistics(log, directory: str, name=None, variant=None):
 
 
 def activity_waiting_time(log, statistics=False):
+    """
+       This function takes an event log and a boolean parameter as input. For each activity in the event log all waiting
+       times are gathered, this means for all instances of the respective activity. The waiting time is calculated as
+       difference between the end timestamp of preceeding activites and the start timestamp of the corresponding activity.
+       Then basic statistics per activity are calculated and a resulting histogram showing the distribution of watiting
+       times for each activity is computed and shown as a figure, if statistics parameter set to True.
+
+       :param log: PM4PY oevent log object
+       :param statistics: Bool, if True plots the waiting time distribution per activity queue
+       :return: Dict with activities and corresponding waiting times
+           Generates and stores figures with statistics
+       """
     dfg = dfg_discovery.apply(log)  # contains activity pairs that directly-follow, use them to calculate waiting times
     df_activities = dfg.keys()
     waiting_times = {}
