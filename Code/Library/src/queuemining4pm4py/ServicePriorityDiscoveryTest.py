@@ -28,6 +28,7 @@ from enum import Enum
 from pm4py.util import constants
 from pm4py.algo.discovery.performance_spectrum import algorithm as performance_spectrum
 from ServicePriorityDiscovery import ServicePriorityDiscovery
+from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 
 class Parameters(Enum):
     ATTRIBUTE_KEY = constants.PARAMETER_CONSTANT_ATTRIBUTE_KEY
@@ -39,6 +40,9 @@ class Parameters(Enum):
 variant = xes_importer.Variants.ITERPARSE
 parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
 log = xes_importer.apply('e.xes', variant=variant, parameters=parameters)
-activities = ['register request', 'examine casually']
+
+# If the user puts 2 activities, then the function checks and shows result of Service priority.
+# If the user puts one activity, then the function finds all the directly connected function with the activity and shows result for them.
+activities = ['register request']
 ServicePriorityDiscovery(log,activities)
 
