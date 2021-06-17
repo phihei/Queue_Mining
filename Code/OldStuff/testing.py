@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import pm4py.objects.dfg.utils.dfg_utils as pm4pydfg
 import pm4py.stats
+import scipy
 
 from Code.Library.src.queuemining4pm4py.statistics_logs import *
 from pm4py.objects.log.importer.xes import importer as xes_importer
@@ -23,6 +24,10 @@ from pathlib import Path
 from pm4py import view_performance_spectrum
 from pm4py.algo.discovery.temporal_profile import algorithm as temporal_profile_discovery
 from Code.Library.src.queuemining4pm4py import xes_to_nx_utilities
+from fitter import Fitter
+from pm4py.objects.log.util import dataframe_utils
+from pm4py.objects.conversion.log import converter as log_converter
+
 
 
 class Parameters(Enum):
@@ -30,23 +35,31 @@ class Parameters(Enum):
     ACTIVITY_KEY = constants.PARAMETER_CONSTANT_ACTIVITY_KEY
     TIMESTAMP_KEY = constants.PARAMETER_CONSTANT_TIMESTAMP_KEY
     CASE_ID_KEY = constants.PARAMETER_CONSTANT_CASEID_KEY
-
+"""
+convert .csv to XES
+"""
+# log_csv = pd.read_csv('../../logs/sim_model_all4_lifecycle_4.csv', sep=',')
+# log_csv = log_csv.rename(columns={'case': 'case:concept:name', 'event': 'concept:name', 'startTime': 'start_timestamp', 'completeTime': 'time:timestamp'})
+# log_csv = dataframe_utils.convert_timestamp_columns_in_df(log_csv)
+# log_csv = log_csv.sort_values('start_timestamp')
+# event_log = log_converter.apply(log_csv)
+# xes_expoter.apply(event_log, 'all4_lifecycle.xes')
 
 variant = xes_importer.Variants.ITERPARSE
 parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('../../logs/HospitalBillingEventLog_lifecycle.xes', variant=variant, parameters=parameters)
+log = xes_importer.apply('../../logs/all4_lifecycle.xes', variant=variant, parameters=parameters)
 
 
 #['NEW', 'CHANGE DIAGN', 'FIN', 'RELEASE', 'CODE OK', 'BILLED', 'DELETE', 'MANUAL', 'REOPEN', 'STORNO', 'REJECT', 'SET STATUS', 'CODE NOK', 'CHANGE END', 'JOIN-PAT', 'CODE ERROR', 'ZDBC_BEHAN', 'EMPTY']
 #view_performance_spectrum(log, ['CHANGE DIAGN', 'RELEASE', 'CODE OK'], format="svg")
-""""
+"""
 Test xes_to_nx_utilities
 """
 # G = xes_to_nx_utilities.transform_xes_log_to_nxDiGraph(log, variant='inductive')
 # #
 # nx.draw(G, with_labels=True)
 # plt.show()
-""""
+"""
 Test statistics_logs
 """
 #case_duration_statistics(log,1, name='test')
@@ -66,10 +79,10 @@ Add lifecycle transitions if not contained and add random service times followin
 """"
 Quick overview on log
 """
-#attributes = pm4py.stats.get_attributes(log)
+# attributes = pm4py.stats.get_attributes(log)
 # attribute_values = {}
 # trace_values = {}
-#     attribute_values[attr] = pm4py.stats.get_attribute_values(log, attr)
+# attribute_values = pm4py.stats.get_attribute_values(log, 'concept:instance')
 # case_arival_avg = pm4py.stats.get_case_arrival_average(log)
 
 # case_start_time = [(trace[0]['concept:name'], trace[0]['start_timestamp']) for trace in log if trace and 'start_timestamp' in trace[0]]
@@ -82,11 +95,11 @@ Quick overview on log
 #     case_diff_start_time.append((case_start_time[1][i+1]-case_start_time[1][i]).total_seconds())
 #     case_diff_waiting_time.append(())
 
-#
+
 # print(attribute_values)
-#print(attributes)
-# print(trace_values)
-# print(case_arival_avg)
+# print(attributes)
+#print(trace_values)
+#print(case_arival_avg)
 # print(case_start_time)
 # print(case_diff_start_time)
 
@@ -110,6 +123,7 @@ Quick overview on log
 # print(temporal_profile)
 # dfg = dfg_discovery.apply(log) #contains activity pairs that directly-follow, use them to calculate waiting times
 # df_activities = dfg.keys()
+# print(df_activities)
 # waiting_times = {}
 # seen = set()
 # for trace in log:
@@ -119,35 +133,43 @@ Quick overview on log
 #             waiting_times[trace[i+1]['concept:name']] = []
 #         if (trace[i]['concept:name'], trace[i+1]['concept:name']) in df_activities and ((trace[i+1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds() > 0):
 #             waiting_times[trace[i+1]['concept:name']].append((trace[i+1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds())
+# from fitter import HistFit
+# from pylab import hist
 #
-# print(waiting_times)
-test = activity_waiting_time(log, statistics=True)
-
-#activities_times = dict.fromkeys(activities, [])
-
-# for activity in activities_times:
-#     deltas = [x for triple in activities_times[activity] for x in triple[-1:]]
+# for activity in waiting_times:
+#     deltas = waiting_times[activity]
 #     mean = np.mean(deltas)
 #     min = np.min(deltas)
 #     max = np.max(deltas)
 #     std = np.std(deltas)
+#     f = Fitter(deltas)
+#     f.distributions = ['uniform', 'norm', 'gamma', 'beta', 'lognorm']
+#     f.fit()
+#     f.summary()
+#     print(activity, f.get_best(), f.summary())
+#     f.hist()
+#     f.plot_pdf()
 #
-#     fig, ax = plt.subplots()
-#     mu = mean
-#     sigma = std
+#
+#
+#     # fig, ax = plt.subplots()
+#     # mu = mean
+#     # sigma = std
 #
 #     # the histogram of the data
-#     n, bins, patches = ax.hist(deltas, bins=30, density=True)
+#     #n, bins, patches = ax.hist(deltas, bins=30, density=True)
 #
 #     # add a 'best fit' line
-#     y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
-#          np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
-#     ax.plot(bins, y, '--')
-#     ax.set_xticks(range(int(min), int(max), 5))  # need to be adjusted to be readable
-#     ax.set_xlabel('Duration in min')
-#     ax.set_ylabel('Probability density')
-#     ax.set_title(r'Time Distribution for activity: ' + activity)
-#
-#     # Tweak spacing to prevent clipping of ylabel
-#     fig.tight_layout()
-#     plt.show()
+#     #y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
+#     #     np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
+#     # ax.plot(bins, y, '--')
+#     # ax.set_xticks(range(int(min), int(max), 5))  # need to be adjusted to be readable
+#     # ax.set_xlabel('Duration in min')
+#     # ax.set_ylabel('Probability density')
+#     # ax.set_title(r'Time Distribution for activity: ' + activity)
+#     #
+#     # # Tweak spacing to prevent clipping of ylabel
+#     # fig.tight_layout()
+#     # plt.show()
+
+time_distribution_classification(activity_waiting_time(log))

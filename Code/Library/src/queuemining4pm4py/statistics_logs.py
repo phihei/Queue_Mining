@@ -8,6 +8,8 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
+from fitter import Fitter
+import pm4py.stats
 from pathlib import Path
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.statistics.traces.log import case_statistics
@@ -50,7 +52,6 @@ def case_duration_statistics_batch(time_distribution: bool, directory: str, name
              directory / file)
         all_case_durations = case_statistics.get_all_casedurations(log, parameters={
             case_statistics.Parameters.TIMESTAMP_KEY: 'time:timestamp'})
-        #add calculation of total duration from start to end -> differs a lot depending on markov chain
 
         for duration in all_case_durations:
             all_case_durations_in_min.append(duration/60)
@@ -205,7 +206,7 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
             fig.savefig(name + '.png')
 
 
-def activity_duration_statistics(log, directory: str, name=None):
+def activity_duration_statistics(log, directory: str, timestamp_attribute=None, name=None):
     """
     This function takes an event log, directory path and an optional name as input. For each activity in the event log all service times are
     gathered, this means for all instances of the activity. Then basic statistics per activity are calculated and a
@@ -214,8 +215,9 @@ def activity_duration_statistics(log, directory: str, name=None):
     :param log: PM4PY oevent log object
     :param directory: String: providing the path to the folder where the event logs are located and where plots will be saved in
             the subfolder /statistics
+    :param timestamp_attribute: String that defines the attribute name of the start timestamp
     :param name: String: prefix in the filename for the generated figures
-    :return: Nothing
+    :return: Dict with activities as keys and their service times as list
         Generates and stores figures with statistics
     """
     if log is None:
@@ -223,6 +225,15 @@ def activity_duration_statistics(log, directory: str, name=None):
         return -1
     if name is None:
         name = ""
+    if 'start_timestamp' not in pm4py.stats.get_attributes(log) and timestamp_attribute is None:
+        print('Event log has no attribute start_timestamp, can not compute service time. Provide timestamp_attribute '
+              'parameter value as string or convert event log to lifecycle format.')
+    elif timestamp_attribute is not None:
+        start_service = timestamp_attribute
+
+    else:
+        start_service = 'start_timestamp'
+        end_service = 'time:timestamp'
     # if variant == 'service':
     #     delta =(event['time:timestamp'] - event['start_timestamp']).total_seconds())
     # elif variant == 'waiting':
@@ -244,10 +255,10 @@ def activity_duration_statistics(log, directory: str, name=None):
             else:
                 activities_times[event['concept:name']] = []
                 activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (
-                            event['time:timestamp'] - event['start_timestamp']).total_seconds()))
+                            event['time:timestamp'] - event['start_timestamp']).total_seconds()/60))
 
     for activity in activities_times:
-        deltas = [x/60 for triple in activities_times[activity] for x in triple[-1:]]
+        deltas = [x for triple in activities_times[activity] for x in triple[-1:]]
         mean = np.mean(deltas)
         min = np.min(deltas)
         max = np.max(deltas)
@@ -277,9 +288,9 @@ def activity_duration_statistics(log, directory: str, name=None):
         fig.tight_layout()
         plt.show()
         fig.savefig(directory / 'statistics' / ('timeDist_' + activity + name + '.png'))
+    return activities_times
 
-
-def activity_waiting_time(log, statistics=False):
+def activity_waiting_time(log, statistics=False, timestamp_attribute: str =None):
     """
        This function takes an event log and a boolean parameter as input. For each activity in the event log all waiting
        times are gathered, this means for all instances of the respective activity. The waiting time is calculated as
@@ -289,9 +300,21 @@ def activity_waiting_time(log, statistics=False):
 
        :param log: PM4PY oevent log object
        :param statistics: Bool, if True plots the waiting time distribution per activity queue
-       :return: Dict with activities and corresponding waiting times
+       :return: Dict with activities as keys and corresponding waiting times as list
            Generates and stores figures with statistics
        """
+    if log is None:
+        print('We need an event log.')
+        return -1
+    if 'start_timestamp' not in pm4py.stats.get_attributes(log) and timestamp_attribute is None:
+        start_waiting, end_waiting = 'time:timestamp'
+    elif timestamp_attribute is not None:
+        start_waiting = 'time:timestamp'
+        end_waiting = timestamp_attribute
+    else:
+        start_waiting = 'time:timestamp'
+        end_waiting = 'start_timestamp'
+
     dfg = dfg_discovery.apply(log)  # contains activity pairs that directly-follow, use them to calculate waiting times
     df_activities = dfg.keys()
     waiting_times = {}
@@ -302,9 +325,9 @@ def activity_waiting_time(log, statistics=False):
                 seen.add(trace[i + 1]['concept:name'])
                 waiting_times[trace[i + 1]['concept:name']] = []
             if (trace[i]['concept:name'], trace[i + 1]['concept:name']) in df_activities and (
-                    (trace[i + 1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds() > 0):
+                    (trace[i + 1][end_waiting] - trace[i][start_waiting]).total_seconds() > 0):
                 waiting_times[trace[i + 1]['concept:name']].append(
-                    ((trace[i + 1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds())/60)
+                    ((trace[i + 1][end_waiting] - trace[i][start_waiting]).total_seconds())/60)
 
     if not statistics:
         return waiting_times
@@ -341,3 +364,56 @@ def activity_waiting_time(log, statistics=False):
             #fig.savefig(directory / 'statistics' / ('timeDist_' + activity + name + '.png'))
         return waiting_times
 
+
+def time_distribution_classification(data, distributions: list=None):
+    """
+    TODO
+
+    :param data: dict or array with time values for activities
+    :param distributions: , if True plots the waiting time distribution per activity queue
+    :return: Dict with activities as keys and corresponding waiting times as list
+          Generates and stores figures with statistics
+    """
+
+    if isinstance(data, dict):
+        for activity in data:
+            deltas = data[activity]
+            if len(deltas) <= 1:
+                print('Not enough values for', activity, '. Will continue.')
+                continue
+            f = Fitter(deltas)
+            if distributions is not None:
+                f.distributions = distributions
+            else:
+                f.distributions = ['cauchy', 'chi2', 'expon', 'exponpow', 'gamma',
+                                   'lognorm', 'norm', 'powerlaw', 'rayleigh', 'uniform']
+
+            f.fit()
+            f.summary()
+            # dataframe: activity as key, distribution and it's values as columns - goal would be to return a dataframe
+            # if needed
+            print(activity, f.get_best(), f.summary())
+            #f.hist()
+            #f.plot_pdf()
+    elif isinstance(data, list):
+        deltas = data
+        if len(deltas) <= 1:
+            print('Not enough values for fitting distributions.')
+            return -1
+        f = Fitter(deltas)
+        if distributions is not None:
+            f.distributions = distributions
+        else:
+            f.distributions = ['cauchy', 'chi2', 'expon', 'exponpow', 'gamma',
+                               'lognorm', 'norm', 'powerlaw', 'rayleigh', 'uniform']
+
+        f.fit()
+        f.summary()
+        # dataframe: activity as key, distribution and it's values as columns - goal would be to return a dataframe
+        # if needed
+        print(activity, f.get_best(), f.summary())
+        f.hist()
+        f.plot_pdf()
+    else:
+        print('Valid datatypes for data are dicts with activities as keys and corresponding timings as values or lists '
+              'of timing values.')
