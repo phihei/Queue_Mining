@@ -1,9 +1,0 @@
-\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
-\contentsline {chapter}{\numberline {2}Business Case}{1}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Case I}{1}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Deteil}{1}{subsection.2.1.1}%
-\contentsline {chapter}{\numberline {3}Feasibility Study}{1}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Theoretical}{1}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Technical}{1}{section.3.2}%
-\contentsline {chapter}{\numberline {4}Project Charter}{1}{chapter.4}%
-\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
