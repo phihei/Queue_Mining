@@ -365,9 +365,10 @@ def activity_waiting_time(log, statistics=False, timestamp_attribute: str =None)
         return waiting_times
 
 
-def time_distribution_classification(data, distributions: list=None):
+def time_distribution_classification(data, distributions: list= None):
     """
     TODO
+    aic stands for the Akaike information criterion, bic for the Bayesian information criterion, kl_div for the Kullback-Leibler divergence from scipy.special
 
     :param data: dict or array with time values for activities
     :param distributions: , if True plots the waiting time distribution per activity queue
@@ -376,6 +377,7 @@ def time_distribution_classification(data, distributions: list=None):
     """
 
     if isinstance(data, dict):
+        #columns = ['Activity', 'Best Fit', ]
         for activity in data:
             deltas = data[activity]
             if len(deltas) <= 1:
@@ -389,10 +391,13 @@ def time_distribution_classification(data, distributions: list=None):
                                    'lognorm', 'norm', 'powerlaw', 'rayleigh', 'uniform']
 
             f.fit()
-            f.summary()
+            summary = f.summary()
+            best_fit = list(f.get_best().keys())[0]
             # dataframe: activity as key, distribution and it's values as columns - goal would be to return a dataframe
             # if needed
-            print(activity, f.get_best(), f.summary())
+            print("activity:", activity, "| best fit distribution:", best_fit, "\n", summary)
+            print("__________________________________________________________")
+            #df[activity]
             #f.hist()
             #f.plot_pdf()
     elif isinstance(data, list):
@@ -411,7 +416,7 @@ def time_distribution_classification(data, distributions: list=None):
         f.summary()
         # dataframe: activity as key, distribution and it's values as columns - goal would be to return a dataframe
         # if needed
-        print(activity, f.get_best(), f.summary())
+        print("best fit distribution:", list(f.get_best().keys())[0], "\n", f.summary())
         f.hist()
         f.plot_pdf()
     else:

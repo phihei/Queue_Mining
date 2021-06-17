@@ -47,7 +47,7 @@ convert .csv to XES
 
 variant = xes_importer.Variants.ITERPARSE
 parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('../../logs/all4_lifecycle.xes', variant=variant, parameters=parameters)
+log = xes_importer.apply('../../logs/HospitalBillingEventLog.xes', variant=variant, parameters=parameters)
 
 
 #['NEW', 'CHANGE DIAGN', 'FIN', 'RELEASE', 'CODE OK', 'BILLED', 'DELETE', 'MANUAL', 'REOPEN', 'STORNO', 'REJECT', 'SET STATUS', 'CODE NOK', 'CHANGE END', 'JOIN-PAT', 'CODE ERROR', 'ZDBC_BEHAN', 'EMPTY']
@@ -70,11 +70,11 @@ Test statistics_logs
 """"
 Add lifecycle transitions if not contained and add random service times following a normal distribution
 """
-# log = interval_lifecycle.to_interval(log)
-#
-# for trace in log:
-#     for event in trace:
-#         event['time:timestamp'] = event['start_timestamp'] + timedelta(seconds=random.uniform(3,1500))
+log = interval_lifecycle.to_interval(log)
+
+for trace in log:
+    for event in trace:
+        event['time:timestamp'] = event['start_timestamp'] + timedelta(seconds=random.triangular(3, 1500))
 # xes_expoter.apply(log, '../../../../logs/running-example.xes')
 """"
 Quick overview on log
