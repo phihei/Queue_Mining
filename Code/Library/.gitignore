@@ -1,0 +1,17 @@
+# Gitignores:
+
+
+# IDE Files
+**/.idea
+
+# distribution
+**/dist/
+
+# Gets created when compiling docs
+build 
+
+# Gets created when compiling building the distributionen
+src/queuemining4pm4py.egg-info/
+
+#Others
+**/__pycache__

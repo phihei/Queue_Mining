@@ -1,23 +1,19 @@
 import unittest
 import src.queuemining4pm4py
-from pm4py.objects.log.importer.xes import importer as xes_importer
 import warnings
 import datetime
-
-
 import pm4py
-
 from pm4py.objects.log.importer.xes import importer as xes_importer
-from pm4py.util import exec_utils, constants
-from datetime import datetime, timedelta
+from pm4py.util import constants
 from enum import Enum
+
 
 class TestAnalysisQueueArrivalRate(unittest.TestCase):
 
     def test_analysisQueueArrivalRate_for_ValueErrors(self):
         # Interval Value Checks
         warnings.filterwarnings('ignore', category=ResourceWarning)
-        log = xes_importer.apply("running-example.xes")
+        log = xes_importer.apply("logs/running-example.xes")
         self.assertRaises(ValueError, src.queuemining4pm4py.analyzeQueueArrivalRate, log,
                           ['register request', 'reinitiate request'], "1Day")
         self.assertRaises(ValueError, src.queuemining4pm4py.analyzeQueueArrivalRate, log,
@@ -44,7 +40,7 @@ class TestAnalysisQueueArrivalRate(unittest.TestCase):
 
         # EventList Type checks
         warnings.filterwarnings('ignore', category=ResourceWarning)
-        log = xes_importer.apply("running-example.xes")
+        log = xes_importer.apply("logs/running-example.xes")
         self.assertRaises(TypeError, src.queuemining4pm4py.analyzeQueueArrivalRate, log, None,
                           datetime.timedelta(days=1))
         self.assertRaises(TypeError, src.queuemining4pm4py.analyzeQueueArrivalRate, log, 1, datetime.timedelta(days=1))
@@ -73,10 +69,27 @@ class TestAnalysisQueueArrivalRate(unittest.TestCase):
         self.assertRaises(TypeError, src.queuemining4pm4py.analyzeQueueArrivalRate, log,
                           ['register request', 'reinitiate request'], aligned="True")
 
+    def test_delayPrediction_getPTSPrediction(self):
+        pass
+
 
 if __name__ == '__main__':
-    pass
-
+    log = xes_importer.apply('logs/delayPrediction/delayPrediction-example1.xes')
+    delayPredictor = src.queuemining4pm4py.DelayPredictor(log, "EnterQueue", "QueueAbandon", "ServiceStart",
+                                                          "ServiceEnd")
+    waitPrediction = delayPredictor.getPTSPrediction(60, datetime.datetime(2021, 6, 18, 10))
+    print(f"PTS Delay Predictionn: {str(waitPrediction)}")
+    waitPrediction = delayPredictor.getQLPPrediction(60, 2, datetime.timedelta(seconds=300),
+                                                     datetime.datetime(2021, 6, 18, 10))
+    print(f"QLP Delay Predictor: {str(waitPrediction)}")
+    waitPrediction = delayPredictor.getQLMPPrediction(60, 2, datetime.timedelta(seconds=300), 0.0001,
+                                                      datetime.datetime(2021, 6, 18, 10))
+    print(f"QLMP Delay Predictor: {str(waitPrediction)}")
+    waitPrediction = delayPredictor.getLESPrediction(60, datetime.datetime(2021, 6, 18, 10))
+    print(f"LES Delay Predictor: {str(waitPrediction)}")
+    waitPrediction = delayPredictor.getHOLPrediction(60, datetime.datetime(2021, 6, 18, 10))
+    print(f"HOL Delay Predictor: {str(waitPrediction)}")
+    print("Done!")
 
 
 class Parameters(Enum):
@@ -86,9 +99,11 @@ class Parameters(Enum):
     CASE_ID_KEY = constants.PARAMETER_CONSTANT_CASEID_KEY
 
 
-variant = xes_importer.Variants.ITERPARSE
-parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('e.xes', variant=variant, parameters=parameters)
+def others():
+    variant = xes_importer.Variants.ITERPARSE
+    parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
+    log = xes_importer.apply('e.xes', variant=variant, parameters=parameters)
 
-# print(log)
-pm4py.view_performance_spectrum(log, ['register request','examine casually','check ticket','decide'], format="svg")
+    # print(log)
+    pm4py.view_performance_spectrum(log, ['register request', 'examine casually', 'check ticket', 'decide'],
+                                    format="svg")
