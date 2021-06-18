@@ -3,7 +3,7 @@ from pm4py.objects.log.importer.xes import importer as xes_importer
 
 from enum import Enum
 from pm4py.util import constants
-from ServicePriorityDiscovery import ServicePriorityDiscovery
+from queuemining4pm4py.ServicePriorityDiscovery import ServicePriorityDiscovery
 
 class Parameters(Enum):
     ATTRIBUTE_KEY = constants.PARAMETER_CONSTANT_ATTRIBUTE_KEY
