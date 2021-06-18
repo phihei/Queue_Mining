@@ -1,10 +1,10 @@
 import random
 import datetime
 
-
 def main():
     f2 = open("delayPredictionTestCreationTemplateLog.xes", "r")
-    f = open("delayPrediction-example1.xes", "w+")
+    iteration = 2
+    f = open(f"delayPrediction-example{iteration}.xes", "w+")
     for i in range(15):
         f.write(f2.readline())
     customers = list()
@@ -54,7 +54,6 @@ def main():
     f.write(f2.readline())
     f.flush()
     f.close()
-
 
 if __name__ == '__main__':
     main()
