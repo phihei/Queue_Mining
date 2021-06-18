@@ -231,7 +231,7 @@ def activity_service_time_statistics(log, directory: str = '', statistics: bool 
         end_service = 'time:timestamp'
 
     if statistics:
-        if directory is not '':
+        if directory != '':
             directory = Path(directory)
         else:
             raise ValueError('Your directory seems to be wrong or unspecified.')
@@ -322,7 +322,7 @@ def activity_waiting_time_statistics(log, directory: str = '', statistics=False,
         start_waiting = 'time:timestamp'
         end_waiting = 'start_timestamp'
     if statistics:
-        if directory is not '':
+        if directory != '':
             directory = Path(directory)
         else:
             raise ValueError('Your directory seems to be wrong or unspecified.')
@@ -402,9 +402,9 @@ def time_distribution_classification(data, distributions='common'):
                 print('Not enough values for', activity, '. Will continue.')
                 continue
             f = Fitter(deltas)
-            if distributions is not None and distributions is not 'common':
+            if distributions is not None and distributions != 'common':
                 f.distributions = distributions
-            elif distributions is 'common':
+            elif distributions == 'common':
                 f.distributions = ['cauchy', 'chi2', 'expon', 'exponpow', 'gamma',
                                    'lognorm', 'norm', 'powerlaw', 'rayleigh', 'uniform']
             else:
@@ -427,9 +427,9 @@ def time_distribution_classification(data, distributions='common'):
             print('Not enough values for fitting distributions.')
             return -1
         f = Fitter(deltas)
-        if distributions is not None and distributions is not 'common':
+        if distributions is not None and distributions != 'common':
             f.distributions = distributions
-        elif distributions is 'common':
+        elif distributions == 'common':
             f.distributions = ['cauchy', 'chi2', 'expon', 'exponpow', 'gamma',
                                'lognorm', 'norm', 'powerlaw', 'rayleigh', 'uniform']
         else:
