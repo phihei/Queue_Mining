@@ -61,6 +61,22 @@ class DelayPredictor:
         customerQueueDuration = currentTime - customerQueueTime
         return max(predictedWait - customerQueueDuration, datetime.timedelta(seconds=0))
 
+    def getAllPTSPredictions(self, currentTime=None):
+        if currentTime is None:
+            currentTime = datetime.datetime.now()
+        if self.PTSN != 0:
+            predictedWait = self.PTSSum / self.PTSN
+        else:
+            predictedWait = self.PTSSum
+        result = dict()
+        for trace in self.eventLog:
+            if trace[len(trace) - 1]["concept:name"] == "EnterQueue":
+                customerQueueTime = trace[len(trace) - 1]["time:timestamp"]
+                customerQueueDuration = currentTime - customerQueueTime
+                result[trace.attributes["concept:name"]] = max(predictedWait - customerQueueDuration, datetime.timedelta(seconds=0))
+
+        return result
+
     def getQLPPrediction(self, customer, numServiceProviders, serviceProviderMeanTimes, currentTime=None):
         if currentTime is None:
             currentTime = datetime.datetime.now()
@@ -80,6 +96,15 @@ class DelayPredictor:
                 customerQueuePosition = customerQueuePosition + 1
 
         return (serviceProviderMeanTimes * (customerQueuePosition + 1)) / numServiceProviders
+
+    def getAllQLPPrediction(self, numServiceProviders, serviceProviderMeanTimes, currentTime=None):
+        if currentTime is None:
+            currentTime = datetime.datetime.now()
+
+        result = dict()
+        for index, customer in enumerate(self.q):
+            result[self.q[index][0]] = (serviceProviderMeanTimes * (index + 1)) / numServiceProviders
+        return result
 
     def getQLMPPrediction(self, customer, numServiceProviders, serviceProviderMeanTimes: datetime.timedelta, customerAbandonRate, currentTime=None):
         if currentTime is None:
@@ -106,6 +131,21 @@ class DelayPredictor:
 
         return waitTime
 
+    def getAllQLMPPrediction(self, numServiceProviders, serviceProviderMeanTimes: datetime.timedelta, customerAbandonRate, currentTime=None):
+        if currentTime is None:
+            currentTime = datetime.datetime.now()
+
+        result = dict()
+        my = 1 / serviceProviderMeanTimes.total_seconds()
+        waitTime = datetime.timedelta(seconds=0)
+        for index, customer in enumerate(self.q):
+            if index == 0:
+                result[self.q[index][0]] = datetime.timedelta(seconds=1 / (numServiceProviders * my + index * customerAbandonRate))
+            else:
+                result[self.q[index][0]] = result[self.q[index - 1][0]] + datetime.timedelta(seconds=1 / (numServiceProviders * my + index * customerAbandonRate))
+
+        return result
+
     def getLESPrediction(self, customer, currentTime=None):
 
         if currentTime is None:
@@ -118,17 +158,24 @@ class DelayPredictor:
         if customerTrace is None:
             raise ValueError("Couldn't find the speficfied customer")
 
-        customerQueuePosition = 0
-        while customerQueuePosition < len(self.q):
-            if self.q[customerQueuePosition][1] == str(customer):
-                break
-            else:
-                customerQueuePosition = customerQueuePosition + 1
-
         customerQueueTime = customerTrace[len(customerTrace) - 1]["time:timestamp"]
         customerQueueDuration = currentTime - customerQueueTime
 
         return max(self.LES - customerQueueDuration, datetime.timedelta(seconds=0))
+
+    def getAllLESPrediction(self, currentTime=None):
+
+        if currentTime is None:
+            currentTime = datetime.datetime.now()
+
+        result = dict()
+        for trace in self.eventLog:
+            if trace[len(trace) - 1]["concept:name"] == "EnterQueue":
+                customerQueueTime = trace[len(trace) - 1]["time:timestamp"]
+                customerQueueDuration = currentTime - customerQueueTime
+                result[trace.attributes["concept:name"]] = max(self.LES - customerQueueDuration, datetime.timedelta(seconds=0))
+
+        return result
 
     def getHOLPrediction(self, customer, currentTime=None):
 
@@ -146,4 +193,16 @@ class DelayPredictor:
 
         return customerQueueTime - self.HOL
 
+    def getAllHOLPrediction(self, currentTime=None):
+
+        if currentTime is None:
+            currentTime = datetime.datetime.now()
+
+        result = dict()
+        for trace in self.eventLog:
+            if trace[len(trace) - 1]["concept:name"] == "EnterQueue":
+                customerQueueTime = trace[len(trace) - 1]["time:timestamp"]
+                result[trace.attributes["concept:name"]] = customerQueueTime - self.HOL
+
+        return result
 
