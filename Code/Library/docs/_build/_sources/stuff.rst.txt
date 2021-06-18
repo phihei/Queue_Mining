@@ -1,6 +1,0 @@
-Queue mining 4 PM4PY
-========================
-
-
-.. automodule:: queuemining4pm4py
-    :members:

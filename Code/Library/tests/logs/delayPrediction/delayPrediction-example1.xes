@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- XES version 1.0 -->
+<log xes.version="1.0">
+	<extension name="Concept" prefix="concept" uri="http://code.deckfour.org/xes/concept.xesext"/>
+	<extension name="Time" prefix="time" uri="http://code.deckfour.org/xes/time.xesext"/>
+	<extension name="Organizational" prefix="org" uri="http://code.deckfour.org/xes/org.xesext"/>
+	<global scope="trace">
+		<string key="concept:name" value="name"/>
+	</global>
+	<global scope="event">
+		<date key="time:timestamp" value="2010-10-17T20:01:02.229+02:00"/>
+		<string key="concept:name" value="name"/>
+	</global>
+	<classifier name="Activity" keys="concept:name"/>
+	<classifier name="union classifier" keys="concept:name"/>
+	<trace>
+		<string key="concept:name" value="1"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:01:40"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:01:40"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:06:40"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="2"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:02:36"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:02:36"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:07:36"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="3"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:02:59"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:06:41"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:11:41"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="4"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:03:38"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:07:37"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:12:37"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="5"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:05:51"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:11:42"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:16:42"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="6"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:06:46"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:12:38"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:17:38"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="7"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:10:07"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:16:43"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:21:43"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="8"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:12:12"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:17:39"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:22:39"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="9"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:12:18"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:21:44"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:26:44"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="10"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:13:10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:22:40"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:27:40"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="11"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:14:40"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:26:45"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:31:45"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="12"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:14:41"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:27:41"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:32:41"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="13"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:17:14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:31:46"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:36:46"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="14"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:21:54"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:32:42"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:37:42"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="15"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:23:02"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:36:47"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:41:47"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="16"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:24:30"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:37:43"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:42:43"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="17"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:29:33"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:41:48"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:46:48"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="18"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:31:14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:42:44"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:47:44"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="19"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:32:08"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:46:49"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:51:49"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="20"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:32:47"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:47:45"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:52:45"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="21"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:37:32"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:51:50"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:56:50"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="22"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:38:13"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:52:46"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 08:57:46"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="23"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:40:58"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:56:51"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:01:51"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="24"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:44:07"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 08:57:47"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:02:47"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="25"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:44:50"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:01:52"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:06:52"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="26"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:47:55"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:02:48"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:07:48"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="27"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:48:38"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:06:53"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:11:53"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="28"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:52:25"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:07:49"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:12:49"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="29"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:54:37"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:11:54"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:16:54"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="30"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:54:45"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:12:50"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:17:50"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="31"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:55:25"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:16:55"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:21:55"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="32"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:55:27"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:17:51"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:22:51"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="33"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:57:02"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:21:56"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:26:56"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="34"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:57:06"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:22:52"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:27:52"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="35"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 08:57:55"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:26:57"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:31:57"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="36"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:02:17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:27:53"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:32:53"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="37"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:03:09"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:31:58"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:36:58"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="38"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:05:43"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:32:54"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:37:54"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="39"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:06:58"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:36:59"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:41:59"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="40"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:09:12"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:37:55"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:42:55"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="41"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:11:19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:42:00"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:47:00"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="42"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:15:23"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:42:56"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:47:56"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="43"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:15:31"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:47:01"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:52:01"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="44"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:17:27"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:47:57"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:52:57"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="45"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:17:37"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:52:02"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:57:02"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="46"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:21:55"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:52:58"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceEnd"/>
+			<date key="time:timestamp" value="2021-06-18 09:57:58"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="47"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:23:04"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:57:03"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="48"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:25:05"/>
+		</event>
+		<event>
+			<string key="concept:name" value="ServiceStart"/>
+			<date key="time:timestamp" value="2021-06-18 09:57:59"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="49"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:26:03"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="50"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:26:33"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="51"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:26:45"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="52"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:27:31"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="53"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:32:51"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="54"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:33:00"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="55"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:34:45"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="56"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:36:15"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="57"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:37:02"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="58"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:37:38"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="59"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:37:53"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="60"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:37:56"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="61"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:41:38"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="62"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:42:23"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="63"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:43:10"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="64"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:51:05"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="65"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:51:50"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="66"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:51:53"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="67"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:52:03"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="68"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:52:38"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="69"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:54:58"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="70"/>
+		<event>
+			<string key="concept:name" value="EnterQueue"/>
+			<date key="time:timestamp" value="2021-06-18 09:57:44"/>
+		</event>
+	</trace>
+</log>

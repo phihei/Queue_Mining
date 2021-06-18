@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- XES version 1.0 -->
+<log xes.version="1.0">
+	<extension name="Concept" prefix="concept" uri="http://code.deckfour.org/xes/concept.xesext"/>
+	<extension name="Time" prefix="time" uri="http://code.deckfour.org/xes/time.xesext"/>
+	<extension name="Organizational" prefix="org" uri="http://code.deckfour.org/xes/org.xesext"/>
+	<global scope="trace">
+		<string key="concept:name" value="name"/>
+	</global>
+	<global scope="event">
+		<date key="time:timestamp" value="2010-10-17T20:01:02.229+02:00"/>
+		<string key="concept:name" value="name"/>
+	</global>
+	<classifier name="Activity" keys="concept:name"/>
+	<classifier name="union classifier" keys="concept:name"/>
+</log>

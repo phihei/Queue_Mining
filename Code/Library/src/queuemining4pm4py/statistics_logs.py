@@ -1,16 +1,13 @@
-
-# from pm4py.stats get_case_arrival_average(log: Union[EventLog, pd.DataFrame])
-# /home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/attributes/log/get.py
-# /home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/passed_time/log
-
 import numpy as np
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
+from fitter import Fitter
+import pm4py.stats
 from pathlib import Path
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.statistics.traces.log import case_statistics
-
+from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 
 def case_duration_statistics_batch(time_distribution: bool, directory: str, name: str):
     """
@@ -49,7 +46,6 @@ def case_duration_statistics_batch(time_distribution: bool, directory: str, name
              directory / file)
         all_case_durations = case_statistics.get_all_casedurations(log, parameters={
             case_statistics.Parameters.TIMESTAMP_KEY: 'time:timestamp'})
-        #add calculation of total duration from start to end -> differs a lot depending on markov chain
 
         for duration in all_case_durations:
             all_case_durations_in_min.append(duration/60)
@@ -188,7 +184,8 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
         y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
              np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
         ax.plot(bins, y, '--')
-        ax.set_xticks(range(int(min), int(max), 5)) #need to be adjusted to be readable
+        ax.set_xticks(bins) #need to be adjusted to be readable
+        ax[0].tick_params(rotation=45)
         ax.set_xlabel('Duration in min')
         ax.set_ylabel('Probability density')
         ax.set_title(r'Time Distribution ' + name)
@@ -203,32 +200,42 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
             fig.savefig(name + '.png')
 
 
-def activity_duration_statistics(log, directory: str, name=None, variant=None):
+def activity_service_time_statistics(log, directory: str='', statistics: bool=False, timestamp_attribute=None, name=None):
     """
-    This function takes an event log, directory path and an optional name as input. In future releases there will be
-    different variants controlled by the variant parameter. For each activity in the event log all service times are
+    This function takes an event log, directory path and an optional name as input. For each activity in the event log all service times are
     gathered, this means for all instances of the activity. Then basic statistics per activity are calculated and a
     resulting histogram showing the distribution of service times for each activity is computed and shown as a figure.
 
     :param log: PM4PY oevent log object
+    :param statistics: Boolean value, if True saves corresponding figures AND return results, if False only result returned
     :param directory: String: providing the path to the folder where the event logs are located and where plots will be saved in
             the subfolder /statistics
+    :param timestamp_attribute: String that defines the attribute name of the start timestamp
     :param name: String: prefix in the filename for the generated figures
-    :param variant: Not used yet.
-    :return: Nothing
+    :return: Dict with activities as keys and their service times as list
         Generates and stores figures with statistics
     """
     if log is None:
-        print('We need an event log.')
-        return -1
+        raise TypeError('We need an PM4PY event log.')
+
     if name is None:
         name = ""
-    # if variant == 'service':
-    #     delta =(event['time:timestamp'] - event['start_timestamp']).total_seconds())
-    # elif variant == 'waiting':
-    #     delta = 0 #calculating waiting time will be added later
-    #
-    directory = Path(directory)
+    if 'start_timestamp' not in pm4py.stats.get_attributes(log) and timestamp_attribute is None:
+        print('Event log has no attribute start_timestamp, can not compute service time. Provide timestamp_attribute '
+              'parameter value as string or convert event log to lifecycle format.')
+    elif timestamp_attribute is not None:
+        start_service = timestamp_attribute
+        emd_service = 'time:timestamp'
+    else:
+        start_service = 'start_timestamp'
+        end_service = 'time:timestamp'
+
+    if statistics:
+        if directory != '':
+            directory = Path(directory)
+        else:
+            raise ValueError('Your directory seems to be wrong or unspecified.')
+
     activities = []
     seen = set()
     activities_times = {}
@@ -239,41 +246,208 @@ def activity_duration_statistics(log, directory: str, name=None, variant=None):
                 activities.append(event['concept:name'])
                 activities_times[event['concept:name']] = []
             if isinstance(activities_times[event['concept:name']], list):
-                activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (
-                            event['time:timestamp'] - event['start_timestamp']).total_seconds()))
+                activities_times[event['concept:name']].append((event[end_service] -
+                                                                event[start_service]).total_seconds()/60)
+            # elif isinstance(activities_times[event['concept:name']], list) and directly_follows_relation:
+            #     activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (
+            #             event['time:timestamp'] - event['start_timestamp']).total_seconds() / 60))
+            # else:
+            #     activities_times[event['concept:name']] = []
+            #     activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (
+            #                 event['time:timestamp'] - event['start_timestamp']).total_seconds()/60))
+    if not statistics:
+        return activities_times
+    else:
+        for activity in activities_times:
+            #deltas = [x for triple in activities_times[activity] for x in triple[-1:]]
+            deltas = activities_times[activity]
+            mean = np.mean(deltas)
+            min = np.min(deltas)
+            max = np.max(deltas)
+            std = np.std(deltas)
+
+            fig, ax = plt.subplots(2,1)
+            mu = mean
+            sigma = std
+
+            # the histogram of the data
+            n, bins, patches = ax[0].hist(deltas, bins=30, density=True)
+
+            # add a 'best fit' line
+            y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
+                 np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
+            ax[0].plot(bins, y, '--')
+            ax[0].set_xticks(bins)  # need to be adjusted to be readable
+            ax[0].tick_params(rotation=45)
+            ax[0].set_xlabel('Duration in min')
+            ax[0].set_ylabel('Probability density')
+            ax[0].set_title(r'Service Time Distribution for activity: ' + activity)
+            ax[1].axis('tight')
+            ax[1].axis('off')
+            ax[1].table(cellText=[[mean], [min], [max], [std]], colLabels=['Values'], rowLabels=['mean', 'min', 'max', 'std'],
+                     loc='center')
+            # Tweak spacing to prevent clipping of ylabel
+            fig.tight_layout()
+            #plt.show()
+            fig.savefig(directory / 'statistics' / ('serviceTimeDist_' + activity + name + '.png'))
+        return activities_times
+
+
+def activity_waiting_time_statistics(log, directory: str='', statistics=False, timestamp_attribute: str=None, name: str=None):
+    """
+       This function takes an event log and a boolean parameter as input. For each activity in the event log all waiting
+       times are gathered, this means for all instances of the respective activity. The waiting time is calculated as
+       difference between the end timestamp of preceeding activites and the start timestamp of the corresponding activity.
+       Then basic statistics per activity are calculated and a resulting histogram showing the distribution of watiting
+       times for each activity is computed and shown as a figure, if statistics parameter set to True.
+
+       :param log: PM4PY oevent log object
+       :param directory: String: providing the path to the folder where the event logs are located and where plots will
+       be saved in the subfolder /statistics
+       :param statistics: Bool, if True plots the waiting time distribution per activity queue
+       :param timestamp_attribute: String that defines the attribute name of the start timestamp
+       :param name: String: prefix in the filename for the generated figures
+       :return: Dict with activities as keys and corresponding waiting times as list
+           Generates and stores figures with statistics
+       """
+    if log is None:
+        print('We need an event log.')
+        return -1
+    if 'start_timestamp' not in pm4py.stats.get_attributes(log) and timestamp_attribute is None:
+        start_waiting, end_waiting = 'time:timestamp'
+    elif timestamp_attribute is not None:
+        start_waiting = 'time:timestamp'
+        end_waiting = timestamp_attribute
+    else:
+        start_waiting = 'time:timestamp'
+        end_waiting = 'start_timestamp'
+    if statistics:
+        if directory != '':
+            directory = Path(directory)
+        else:
+            raise ValueError('Your directory seems to be wrong or unspecified.')
+
+    dfg = dfg_discovery.apply(log)  # contains activity pairs that directly-follow, use them to calculate waiting times
+    df_activities = dfg.keys()
+    waiting_times = {}
+    seen = set()
+    for trace in log:
+        for i in range(len(trace) - 2):
+            if trace[i + 1]['concept:name'] not in seen:
+                seen.add(trace[i + 1]['concept:name'])
+                waiting_times[trace[i + 1]['concept:name']] = []
+            if (trace[i]['concept:name'], trace[i + 1]['concept:name']) in df_activities and (
+                    (trace[i + 1][end_waiting] - trace[i][start_waiting]).total_seconds() > 0):
+                waiting_times[trace[i + 1]['concept:name']].append(
+                    ((trace[i + 1][end_waiting] - trace[i][start_waiting]).total_seconds())/60)
+
+    if not statistics:
+        return waiting_times
+    else:
+        for activity in waiting_times:
+            deltas = waiting_times[activity]
+            mean = np.mean(deltas)
+            min = np.min(deltas)
+            max = np.max(deltas)
+            std = np.std(deltas)
+
+            fig, ax = plt.subplots(2, 1)
+            mu = mean
+            sigma = std
+
+            # the histogram of the data
+            n, bins, patches = ax[0].hist(deltas, bins=30, density=True)
+
+            # add a 'best fit' line
+            y = ((1 / (np.sqrt(2 * np.pi) * sigma)) * np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
+            ax[0].plot(bins, y, '--')
+            ax[0].set_xticks(bins)  # need to be adjusted to be readable
+            ax[0].tick_params(rotation=45)
+            ax[0].set_xlabel('Waiting Time in min')
+            ax[0].set_ylabel('Probability density')
+            ax[0].set_title(r'Waiting Time Distribution for activity: ' + activity)
+            ax[1].axis('tight')
+            ax[1].axis('off')
+            ax[1].table(cellText=[[mean], [min], [max], [std]], colLabels=['Values'], rowLabels=['mean', 'min', 'max', 'std'],
+                        loc='center')
+            # Tweak spacing to prevent clipping of ylabel
+            fig.tight_layout()
+            #plt.show()
+            fig.savefig(directory / 'statistics' / ('waitingTimeDist_' + activity + name + '.png'))
+        return waiting_times
+
+
+def time_distribution_classification(data, distributions='common'):
+    """
+    This function takes time difference values, e.g. service times or waiting times and computes a classification of the
+    value distribution w.r.t. existing theoretical distributions to achieve a best effort match per activity. Data
+    therefore can be passed as single list of numerical values or a dict with activities as keys as a list of corresponding
+    times as values. Additionally, as there are about 80 distributions available in scipy, passing a list of strings
+    to the distribution parameter allows to specify which distributions should be considered.
+    -aic stands for the Akaike information criterion,
+    -bic for the Bayesian information criterion,
+    -kl_div for the Kullback-Leibler divergence from scipy.special
+
+    :param data: dict or list with time values for activities
+    :param distributions: string or list of strings passing standard distributions to be checked
+    :return: Nothing
+          Currently prints the results to console, but may be extended to return a nicely formatted dataframe.
+    """
+
+    if isinstance(data, dict):
+        #columns = ['Activity', 'Best Fit', ]
+        for activity in data:
+            deltas = data[activity]
+            if not all(isinstance(x, (int, float)) for x in deltas):
+                raise TypeError('Your values does not seem to be int or float.')
+            if len(deltas) <= 1:
+                print('Not enough values for', activity, '. Will continue.')
+                continue
+            f = Fitter(deltas)
+            if distributions is not None and distributions != 'common' and isinstance(distributions, list):
+                f.distributions = distributions
+            elif distributions == 'common':
+                f.distributions = ['cauchy', 'chi2', 'expon', 'exponpow', 'gamma',
+                                   'lognorm', 'norm', 'powerlaw', 'rayleigh', 'uniform']
             else:
-                activities_times[event['concept:name']] = []
-                activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (
-                            event['time:timestamp'] - event['start_timestamp']).total_seconds()))
+                print('Testing all 80 available distributions in scipy, this will take a lot of time.')
+                #f.distributions = None
 
-    for activity in activities_times:
-        deltas = [x for triple in activities_times[activity] for x in triple[-1:]]
-        mean = np.mean(deltas)
-        min = np.min(deltas)
-        max = np.max(deltas)
-        std = np.std(deltas)
+            f.fit()
+            summary = f.summary()
+            best_fit = list(f.get_best().keys())[0]
+            # dataframe: activity as key, distribution and it's values as columns - goal would be to return a dataframe
+            # if needed
+            print("activity:", activity, "| best fit distribution:", best_fit, "\n", summary)
+            print("__________________________________________________________")
+            #df[activity]
+            #f.hist()
+            #f.plot_pdf()
+    elif isinstance(data, list):
+        deltas = data
+        if not all(isinstance(x, (int, float)) for x in deltas):
+            raise TypeError('Your values does not seem to be int or float.')
+        if len(deltas) <= 1:
+            print('Not enough values for fitting distributions.')
+            return -1
+        f = Fitter(deltas)
+        if distributions is not None and distributions != 'common' and isinstance(distributions, list):
+            f.distributions = distributions
+        elif distributions == 'common':
+            f.distributions = ['cauchy', 'chi2', 'expon', 'exponpow', 'gamma',
+                               'lognorm', 'norm', 'powerlaw', 'rayleigh', 'uniform']
+        else:
+            print('Testing all 80 available distributions in scipy, this will take a lot of time.')
+            #f.distributions = None
 
-        fig, ax = plt.subplots(2,1)
-        mu = mean
-        sigma = std
-
-        # the histogram of the data
-        n, bins, patches = ax[0].hist(deltas, bins=30, density=True)
-
-        # add a 'best fit' line
-        y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
-             np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
-        ax[0].plot(bins, y, '--')
-        ax[0].set_xticks(range(int(min), int(max), 5))  # need to be adjusted to be readable
-        ax[0].set_xlabel('Duration in min')
-        ax[0].set_ylabel('Probability density')
-        ax[0].set_title(r'Time Distribution for activity: ' + activity)
-        ax[1].axis('tight')
-        ax[1].axis('off')
-        ax[1].table(cellText=[[mean], [min], [max], [std]], colLabels=['Values'], rowLabels=['mean', 'min', 'max', 'std'],
-                 loc='center')
-        # Tweak spacing to prevent clipping of ylabel
-        fig.tight_layout()
-        plt.show()
-        fig.savefig(directory / 'statistics' / ('timeDist_' + activity + name + '.png'))
-
+        f.fit()
+        summary = f.summary()
+        best_fit = list(f.get_best().keys())[0]
+        # dataframe: activity as key, distribution and it's values as columns - goal would be to return a dataframe
+        # if needed
+        print("best fit distribution:", best_fit, "\n", summary)
+        #f.hist()
+        #f.plot_pdf()
+    else:
+        print('Valid datatypes for data are dicts with activities as keys and corresponding timings as values or lists '
+              'of timing values.')
