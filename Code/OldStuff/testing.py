@@ -172,4 +172,4 @@ Quick overview on log
 #     # fig.tight_layout()
 #     # plt.show()
 
-time_distribution_classification(activity_waiting_time(log))
+time_distribution_classification(activity_service_time_statistics(log), distributions=None)
