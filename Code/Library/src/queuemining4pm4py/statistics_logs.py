@@ -1,9 +1,3 @@
-
-# from pm4py.stats get_case_arrival_average(log: Union[EventLog, pd.DataFrame])
-# /home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/attributes/log/get.py
-# /home/heisenB/miniconda3/envs/Queue_Mining/lib/python3.7/site-packages/pm4py/statistics/passed_time/log
-import pkgutil
-
 import numpy as np
 import os
 import matplotlib.pyplot as plt

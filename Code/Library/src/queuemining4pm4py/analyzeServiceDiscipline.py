@@ -1,4 +1,3 @@
-
 def analyzeServiceDiscipline(eventLog, queueDict):
     """
     Analyzes the service discipline of events in an event Log.

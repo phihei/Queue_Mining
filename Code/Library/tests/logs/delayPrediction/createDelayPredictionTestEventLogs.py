@@ -1,6 +1,7 @@
 import random
 import datetime
 
+
 def main():
     f2 = open("delayPredictionTestCreationTemplateLog.xes", "r")
     f = open("delayPrediction-example1.xes", "w+")

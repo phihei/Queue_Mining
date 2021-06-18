@@ -1,14 +1,8 @@
-import numpy as np
-import pandas as pd
-import os
-import matplotlib.pyplot as plt
 import networkx as nx
 import pm4py.objects.dfg.utils.dfg_utils
 import pm4py.objects.petri_net.utils.networkx_graph
 from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
-
-
 
 def transform_dfg_to_directed_nx_graph(dfg, activities=None) -> nx.DiGraph:
     """

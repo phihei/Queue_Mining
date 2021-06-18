@@ -1,7 +1,5 @@
 import datetime
-
 import pm4py
-
 
 class DelayPredictor:
 
@@ -205,4 +203,3 @@ class DelayPredictor:
                 result[trace.attributes["concept:name"]] = customerQueueTime - self.HOL
 
         return result
-
