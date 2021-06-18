@@ -2,10 +2,13 @@ LICENSE
 README.md
 pyproject.toml
 setup.py
+src/queuemining4pm4py/ServicePriorityDiscovery.py
+src/queuemining4pm4py/ServicePriorityDiscoveryTest.py
 src/queuemining4pm4py/__init__.py
 src/queuemining4pm4py/analyzeQueueArrivalRate.py
 src/queuemining4pm4py/analyzeServiceDiscipline.py
 src/queuemining4pm4py/analyzeServiceTimes.py
+src/queuemining4pm4py/delayPrediction.py
 src/queuemining4pm4py/statistics_logs.py
 src/queuemining4pm4py/xes_to_nx_utilities.py
 src/queuemining4pm4py.egg-info/PKG-INFO
