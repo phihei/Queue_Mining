@@ -2,10 +2,7 @@ import unittest
 import src.queuemining4pm4py
 import warnings
 import datetime
-import pm4py
 from pm4py.objects.log.importer.xes import importer as xes_importer
-from pm4py.util import constants
-from enum import Enum
 
 
 class TestAnalysisQueueArrivalRate(unittest.TestCase):
