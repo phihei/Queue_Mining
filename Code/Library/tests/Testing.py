@@ -75,7 +75,9 @@ class TestAnalysisQueueArrivalRate(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    pass
+    log = xes_importer.apply('delayPrediction-example1.xes')
+    delayPredictor = src.queuemining4pm4py.DelayPredictor(log, "EnterQueue", "QueueAbandon", "ServiceStart", "ServiceEnd")
+    print("Done!")
 
 
 
@@ -85,10 +87,10 @@ class Parameters(Enum):
     TIMESTAMP_KEY = constants.PARAMETER_CONSTANT_TIMESTAMP_KEY
     CASE_ID_KEY = constants.PARAMETER_CONSTANT_CASEID_KEY
 
+def others():
+    variant = xes_importer.Variants.ITERPARSE
+    parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
+    log = xes_importer.apply('e.xes', variant=variant, parameters=parameters)
 
-variant = xes_importer.Variants.ITERPARSE
-parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('e.xes', variant=variant, parameters=parameters)
-
-# print(log)
-pm4py.view_performance_spectrum(log, ['register request','examine casually','check ticket','decide'], format="svg")
+    # print(log)
+    pm4py.view_performance_spectrum(log, ['register request','examine casually','check ticket','decide'], format="svg")

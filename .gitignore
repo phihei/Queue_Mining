@@ -27,8 +27,8 @@
 #*.log
 #*.sql
 #*.sqlite
-*.xes
-*.mxml
+#*.xes
+#*.mxml
 #
 ## OS generated files #
 #######################
