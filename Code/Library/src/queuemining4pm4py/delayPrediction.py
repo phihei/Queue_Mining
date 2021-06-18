@@ -1,16 +1,13 @@
 import datetime
 import pm4py
 
-
 class DelayPredictor:
 
-    def __init__(self, eventLog: pm4py.objects.Eventlog, queueEntryEvent, queueAbandonEvent, serviceStartEvent,
-                 serviceEndEvent):
+    def __init__(self, eventLog: pm4py.objects.log.obj.EventLog, queueEntryEvent, queueAbandonEvent, serviceStartEvent):
         self.eventLog = eventLog
         self.queueEntryEvent = queueEntryEvent
         self.queueAbandonEvent = queueAbandonEvent
         self.serviceStartEvent = serviceStartEvent
-        self.serviceEndEvent = serviceEndEvent
         self.PTSSum = datetime.timedelta(seconds=0)
         self.PTSN = 0
         self.q = list()
