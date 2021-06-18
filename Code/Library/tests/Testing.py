@@ -1,13 +1,10 @@
 import unittest
 import src.queuemining4pm4py
-from pm4py.objects.log.importer.xes import importer as xes_importer
 import warnings
 import datetime
-
 import pm4py
-
 from pm4py.objects.log.importer.xes import importer as xes_importer
-from pm4py.util import exec_utils, constants
+from pm4py.util import constants
 from enum import Enum
 
 
@@ -71,6 +68,9 @@ class TestAnalysisQueueArrivalRate(unittest.TestCase):
                           datetime.timedelta(days=1), aligned=None)
         self.assertRaises(TypeError, src.queuemining4pm4py.analyzeQueueArrivalRate, log,
                           ['register request', 'reinitiate request'], aligned="True")
+
+    def test_delayPrediction_getPTSPrediction(self):
+        pass
 
 
 if __name__ == '__main__':
