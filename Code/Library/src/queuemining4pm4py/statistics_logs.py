@@ -200,7 +200,7 @@ def case_duration_statistics(log, time_distribution: bool, directory=None, name=
             fig.savefig(name + '.png')
 
 
-def activity_service_time_statistics(log, directory: str = '', statistics: bool = False, timestamp_attribute=None, name=None, ):
+def activity_service_time_statistics(log, directory: str='', statistics: bool=False, timestamp_attribute=None, name=None):
     """
     This function takes an event log, directory path and an optional name as input. For each activity in the event log all service times are
     gathered, this means for all instances of the activity. Then basic statistics per activity are calculated and a
@@ -216,8 +216,8 @@ def activity_service_time_statistics(log, directory: str = '', statistics: bool 
         Generates and stores figures with statistics
     """
     if log is None:
-        print('We need an event log.')
-        return -1
+        raise TypeError('We need an PM4PY event log.')
+
     if name is None:
         name = ""
     if 'start_timestamp' not in pm4py.stats.get_attributes(log) and timestamp_attribute is None:
@@ -293,7 +293,7 @@ def activity_service_time_statistics(log, directory: str = '', statistics: bool 
         return activities_times
 
 
-def activity_waiting_time_statistics(log, directory: str = '', statistics=False, timestamp_attribute: str = None, name: str = None):
+def activity_waiting_time_statistics(log, directory: str='', statistics=False, timestamp_attribute: str=None, name: str=None):
     """
        This function takes an event log and a boolean parameter as input. For each activity in the event log all waiting
        times are gathered, this means for all instances of the respective activity. The waiting time is calculated as
@@ -398,11 +398,13 @@ def time_distribution_classification(data, distributions='common'):
         #columns = ['Activity', 'Best Fit', ]
         for activity in data:
             deltas = data[activity]
+            if not all(isinstance(x, (int, float)) for x in deltas):
+                raise TypeError('Your values does not seem to be int or float.')
             if len(deltas) <= 1:
                 print('Not enough values for', activity, '. Will continue.')
                 continue
             f = Fitter(deltas)
-            if distributions is not None and distributions != 'common':
+            if distributions is not None and distributions != 'common' and isinstance(distributions, list):
                 f.distributions = distributions
             elif distributions == 'common':
                 f.distributions = ['cauchy', 'chi2', 'expon', 'exponpow', 'gamma',
@@ -423,17 +425,20 @@ def time_distribution_classification(data, distributions='common'):
             #f.plot_pdf()
     elif isinstance(data, list):
         deltas = data
+        if not all(isinstance(x, (int, float)) for x in deltas):
+            raise TypeError('Your values does not seem to be int or float.')
         if len(deltas) <= 1:
             print('Not enough values for fitting distributions.')
             return -1
         f = Fitter(deltas)
-        if distributions is not None and distributions != 'common':
+        if distributions is not None and distributions != 'common' and isinstance(distributions, list):
             f.distributions = distributions
         elif distributions == 'common':
             f.distributions = ['cauchy', 'chi2', 'expon', 'exponpow', 'gamma',
                                'lognorm', 'norm', 'powerlaw', 'rayleigh', 'uniform']
         else:
-            f.distributions = None
+            print('Testing all 80 available distributions in scipy, this will take a lot of time.')
+            #f.distributions = None
 
         f.fit()
         summary = f.summary()
