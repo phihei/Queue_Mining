@@ -16,7 +16,7 @@ class TestAnalysisQueueArrivalRate(unittest.TestCase):
     def test_analysisQueueArrivalRate_for_ValueErrors(self):
         # Interval Value Checks
         warnings.filterwarnings('ignore', category=ResourceWarning)
-        log = xes_importer.apply("running-example.xes")
+        log = xes_importer.apply("logs/running-example.xes")
         self.assertRaises(ValueError, src.queuemining4pm4py.analyzeQueueArrivalRate, log,
                           ['register request', 'reinitiate request'], "1Day")
         self.assertRaises(ValueError, src.queuemining4pm4py.analyzeQueueArrivalRate, log,
@@ -43,7 +43,7 @@ class TestAnalysisQueueArrivalRate(unittest.TestCase):
 
         # EventList Type checks
         warnings.filterwarnings('ignore', category=ResourceWarning)
-        log = xes_importer.apply("running-example.xes")
+        log = xes_importer.apply("logs/running-example.xes")
         self.assertRaises(TypeError, src.queuemining4pm4py.analyzeQueueArrivalRate, log, None,
                           datetime.timedelta(days=1))
         self.assertRaises(TypeError, src.queuemining4pm4py.analyzeQueueArrivalRate, log, 1, datetime.timedelta(days=1))
@@ -74,7 +74,7 @@ class TestAnalysisQueueArrivalRate(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    log = xes_importer.apply('delayPrediction-example1.xes')
+    log = xes_importer.apply('logs/delayPrediction/delayPrediction-example1.xes')
     delayPredictor = src.queuemining4pm4py.DelayPredictor(log, "EnterQueue", "QueueAbandon", "ServiceStart",
                                                           "ServiceEnd")
     waitPrediction = delayPredictor.getPTSPrediction(60, datetime.datetime(2021, 6, 18, 10))
