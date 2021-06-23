@@ -171,7 +171,7 @@ def __parseDToS(string: str):
     raise ValueError("string incorrect")
 
 def __firstEventTime(eventLog):
-    earliestTime = datetime.datetime(2025, 1, 1, tzinfo=eventLog[0][0]["time:timestamp"].tzinfo)
+    earliestTime = datetime.now() + datetime.timedelta(days=3650)
     for trace in eventLog:
         for event in trace:
             if earliestTime > event["time:timestamp"]:
