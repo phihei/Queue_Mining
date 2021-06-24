@@ -87,12 +87,34 @@ def getPrecedingActivites(log, activities):
 
     return preceding_activities
 
-def queue(df_log, ):
+def queue(df_log):
     """
 
     :param df_log:
     :return:
     """
+    activities = list(set(df_log['concept:name']))
+
+    queues = dict.fromkeys(activities)
+    for a in activities:
+        queues[a] = []
+    latest_TimePoint = df_log.at[len(df_log) - 1, 'time:timestamp']
+    for row in range(len(df_log)):
+        curr_Time = df_log.at[row, 'scheduled_timestamp']
+        print(curr_Time)
+        curr_TimeWindow = [curr_Time, latest_TimePoint]
+
+        if (df_log.at[row, 'start_timestamp'] - curr_Time).total_seconds() > 0:
+            queues[df_log.at[row, 'concept:name']].append((df_log.at[row, 'case:concept:name'],
+                                                                       df_log.at[row, 'start_timestamp']))
+
+        for que in queues.values():
+            if len(que) > 0:
+                for position in que:
+                    if position[1] <= curr_Time:
+                        que.remove(position)
+        print("Current queue: ", queues)
+        print("Number of cases currently: ", sum(map(len, queues.values())))
 
 def possibleTimeSavings():
     """

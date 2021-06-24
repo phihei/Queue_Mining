@@ -13,6 +13,7 @@ import scipy
 import ast
 
 from Code.Library.src.queuemining4pm4py.statistics_logs import *
+from Code.Library.src.queuemining4pm4py.queueDiscovery import *
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 from pm4py.visualization.dfg import visualizer as dfg_visualization
@@ -122,27 +123,29 @@ schedules_times_df.reset_index(drop=True, inplace=True)
 #             activities_times_intervals[event['concept:name']].append((trace.attributes['concept:name'], event['start_timestamp'], event['time:timestamp']))
 #
 #
-activities = list(set(schedules_times_df['concept:name']))
-
-
-queues = dict.fromkeys(activities)
-for a in activities:
-    queues[a] = []
-latest_TimePoint = schedules_times_df.at[len(schedules_times_df)-1, 'time:timestamp']
-for row in range(len(schedules_times_df)):
-    curr_Time = schedules_times_df.at[row, 'scheduled_timestamp']
-    curr_TimeWindow = [curr_Time, latest_TimePoint]
-
-    if (schedules_times_df.at[row, 'start_timestamp'] - curr_Time).total_seconds() > 0:
-        queues[schedules_times_df.at[row, 'concept:name']].append((schedules_times_df.at[row, 'case:concept:name'],
-                                                                   schedules_times_df.at[row, 'start_timestamp']))
-
-    for que in queues.values():
-        if len(que) > 0:
-            for position in que:
-                if position[1] <= curr_Time:
-                    que.remove(position)
-    print(queues)
-    print(sum(map(len, queues.values())))
+# activities = list(set(schedules_times_df['concept:name']))
+#
+#
+# queues = dict.fromkeys(activities)
+# for a in activities:
+#     queues[a] = []
+# latest_TimePoint = schedules_times_df.at[len(schedules_times_df)-1, 'time:timestamp']
+# for row in range(len(schedules_times_df)):
+#     curr_Time = schedules_times_df.at[row, 'scheduled_timestamp']
+#     print(curr_Time)
+#     curr_TimeWindow = [curr_Time, latest_TimePoint]
+#
+#     if (schedules_times_df.at[row, 'start_timestamp'] - curr_Time).total_seconds() > 0:
+#         queues[schedules_times_df.at[row, 'concept:name']].append((schedules_times_df.at[row, 'case:concept:name'],
+#                                                                    schedules_times_df.at[row, 'start_timestamp']))
+#
+#     for que in queues.values():
+#         if len(que) > 0:
+#             for position in que:
+#                 if position[1] <= curr_Time:
+#                     que.remove(position)
+#     print("Current queue: ", queues)
+#     print("Number of cases currently: ", sum(map(len, queues.values())))
 #print('empty?', queues)
 
+queue(schedules_times_df)
