@@ -52,7 +52,7 @@ convert .csv to XES
 #
 variant = xes_importer.Variants.ITERPARSE
 parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('../../logs/running-example_lifecycle.xes', variant=variant, parameters=parameters)
+log = xes_importer.apply('../../logs/HospitalBillingEventLog_lifecycle.xes', variant=variant, parameters=parameters)
 
 
 #['NEW', 'CHANGE DIAGN', 'FIN', 'RELEASE', 'CODE OK', 'BILLED', 'DELETE', 'MANUAL', 'REOPEN', 'STORNO', 'REJECT', 'SET STATUS', 'CODE NOK', 'CHANGE END', 'JOIN-PAT', 'CODE ERROR', 'ZDBC_BEHAN', 'EMPTY']
@@ -70,8 +70,10 @@ Add lifecycle transitions if not contained and add random service times followin
 """"
 Quick overview on log
 """
-#attributes = pm4py.stats.get_attributes(log)
+# attributes = pm4py.stats.get_attributes(log)
+# attributes2 = pm4py.get_attributes(log)
 # print(attributes)
+# print(attributes2)
 
 # attribute_values = pm4py.stats.get_attribute_values(log, 'concept:instance')
 # print(attribute_values)
@@ -148,8 +150,8 @@ Quick overview on log
 #     print("Number of cases currently: ", sum(map(len, queues.values())))
 #print('empty?', queues)
 
-qu, stats = queue(add_finishStart_scheduleTimestamps(log))
+queues, stats = queue(add_finishStart_scheduleTimestamps(log), only_cases=True, len_queues=True)
 
-qu.to_csv('../../logs/running_queues.csv')
-stats.to_csv('../../logs/running_stats.csv')
+queues.to_csv('../../logs/queues_restricted_queues.csv')
+stats.to_csv('../../logs/queues_restricted_stats.csv')
 
