@@ -79,37 +79,37 @@ Quick overview on log
 # case_start_time = [(trace[0]['concept:name'], trace[0]['start_timestamp']) for trace in log if trace and 'start_timestamp' in trace[0]]
 # case_start_time = sorted(case_start_time)
 # case_end_time = [(trace[-1]['time:timestamp'] for trace in log if trace and 'time:timestamp' in trace[-1]]
-#
 
-dfg = dfg_discovery.apply(log) #contains activity pairs that directly-follow, use them to calculate waiting times
-df_activities = list(dfg.keys()) # list of tuples
+
+#dfg = dfg_discovery.apply(log) #contains activity pairs that directly-follow, use them to calculate waiting times
+#df_activities = list(dfg.keys()) # list of tuples
 # print(df_activities)
 
-scheduled_times = {} #earliest possible execution time
+#scheduled_times = {} #earliest possible execution time
 
 #clms = ['case:concept:name'] + (pm4py.stats.get_attributes(log))
-clms = ['case:concept:name', 'concept:name', 'start_timestamp', 'time:timestamp', 'scheduled_timestamp', 'org:resource']
+#clms = ['case:concept:name', 'concept:name', 'start_timestamp', 'time:timestamp', 'scheduled_timestamp', 'org:resource']
 
-schedules_times_df = pd.DataFrame(columns=clms)
+#schedules_times_df = pd.DataFrame(columns=clms)
 
-for trace in log:
-    for i in range(len(trace)-1):
+# for trace in log:
+#     for i in range(len(trace)-1):
         # if trace[i+1]['concept:name'] not in seen:
         #     seen.add(trace[i+1]['concept:name'])
         #     scheduled_times[trace[i+1]['concept:name']] = []
-        if (trace[i]['concept:name'], trace[i+1]['concept:name']) in df_activities:
+      #  if (trace[i]['concept:name'], trace[i+1]['concept:name']) in df_activities:
             #scheduled_times[trace[i+1]['concept:name']].append(trace[i]['time:timestamp'])
             # finish-start dependency, earliest start is latest finish of (all) preceding activities (if AND join)
-            schedules_times_df.loc[len(schedules_times_df)] = [trace.attributes['concept:name'], trace[i+1]['concept:name'],
-                                       trace[i+1]['start_timestamp'], trace[i+1]['time:timestamp'], trace[i]['time:timestamp'], trace[i+1]['org:resource']]
-        if trace[i]['concept:name'] == trace[0]['concept:name']:
-            schedules_times_df.loc[len(schedules_times_df)] = [trace.attributes['concept:name'], trace[i]['concept:name'],
-                                       trace[i]['start_timestamp'], trace[i]['time:timestamp'], trace[i]['start_timestamp'], trace[i]['org:resource']]
+        #     schedules_times_df.loc[len(schedules_times_df)] = [trace.attributes['concept:name'], trace[i+1]['concept:name'],
+        #                                trace[i+1]['start_timestamp'], trace[i+1]['time:timestamp'], trace[i]['time:timestamp'], trace[i+1]['org:resource']]
+        # if trace[i]['concept:name'] == trace[0]['concept:name']:
+        #     schedules_times_df.loc[len(schedules_times_df)] = [trace.attributes['concept:name'], trace[i]['concept:name'],
+        #                                trace[i]['start_timestamp'], trace[i]['time:timestamp'], trace[i]['start_timestamp'], trace[i]['org:resource']]
 #sorted(schedules_times_list, key=operator.itemgetter(0))
 #eventually directly build dataframe from log without
 
-schedules_times_df = schedules_times_df.sort_values(['scheduled_timestamp', 'case:concept:name'])
-schedules_times_df.reset_index(drop=True, inplace=True)
+# schedules_times_df = schedules_times_df.sort_values(['scheduled_timestamp', 'case:concept:name'])
+# schedules_times_df.reset_index(drop=True, inplace=True)
 #schedules_times_df.to_csv('../../logs/running_example_schedule_asc.csv')
 
 # seen = set()
@@ -148,4 +148,8 @@ schedules_times_df.reset_index(drop=True, inplace=True)
 #     print("Number of cases currently: ", sum(map(len, queues.values())))
 #print('empty?', queues)
 
-queue(schedules_times_df)
+qu, stats = queue(add_finishStart_scheduleTimestamps(log))
+
+qu.to_csv('../../logs/running_queues.csv')
+stats.to_csv('../../logs/running_stats.csv')
+
