@@ -95,3 +95,17 @@ class TestAnalysisQueueArrivalRate(unittest.TestCase):
         delayPredictor = src.queuemining4pm4py.DelayPredictor(log, "EnterQueue", "QueueAbandon", "ServiceStart")
         waitPrediction = delayPredictor.getHOLPrediction(60)
         self.assertEqual(datetime.timedelta(seconds=713), waitPrediction)
+
+if __name__ == '__main__':
+    log = xes_importer.apply('logs/delayPrediction/delayPrediction-example1.xes')
+    delayPredictor = src.queuemining4pm4py.DelayPredictor(log, "EnterQueue", "QueueAbandon", "ServiceStart")
+    waitPrediction = delayPredictor.getPTSPrediction(60, datetime.datetime(2021, 6, 18, 10))
+    print(f"Wait Prediction, Method: PTS {waitPrediction}")
+    waitPrediction = delayPredictor.getQLPPrediction(60, 2, datetime.timedelta(seconds=300))
+    print(f"Wait Prediction, Method: QLP {waitPrediction}")
+    waitPrediction = delayPredictor.getQLMPPrediction(60, 2, datetime.timedelta(seconds=300), 0.0001)
+    print(f"Wait Prediction, Method: QLMP {waitPrediction}")
+    waitPrediction = delayPredictor.getLESPrediction(60, datetime.datetime(2021, 6, 18, 10))
+    print(f"Wait Prediction, Method: LES {waitPrediction}")
+    waitPrediction = delayPredictor.getHOLPrediction(60)
+    print(f"Wait Prediction, Method: HOL {waitPrediction}")
