@@ -1,3 +1,5 @@
+import operator
+import pprint
 import random
 
 import numpy as np
@@ -8,8 +10,10 @@ import networkx as nx
 import pm4py.objects.dfg.utils.dfg_utils as pm4pydfg
 import pm4py.stats
 import scipy
+import ast
 
 from Code.Library.src.queuemining4pm4py.statistics_logs import *
+from Code.Library.src.queuemining4pm4py.queueDiscovery import *
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 from pm4py.visualization.dfg import visualizer as dfg_visualization
@@ -38,34 +42,21 @@ class Parameters(Enum):
 """
 convert .csv to XES
 """
-# log_csv = pd.read_csv('../../logs/sim_model_all4_lifecycle_4.csv', sep=',')
+# log_csv = pd.read_csv('../../logs/queues_restricted.csv', sep=',')
 # log_csv = log_csv.rename(columns={'case': 'case:concept:name', 'event': 'concept:name', 'startTime': 'start_timestamp', 'completeTime': 'time:timestamp'})
 # log_csv = dataframe_utils.convert_timestamp_columns_in_df(log_csv)
 # log_csv = log_csv.sort_values('start_timestamp')
 # event_log = log_converter.apply(log_csv)
-# xes_expoter.apply(event_log, 'all4_lifecycle.xes')
+# xes_expoter.apply(event_log, '../../logs/queues_restricted.xes')
 
+#
 variant = xes_importer.Variants.ITERPARSE
 parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('../../logs/all4_lifecycle.xes', variant=variant, parameters=parameters)
+log = xes_importer.apply('../../logs/HospitalBillingEventLog_lifecycle.xes', variant=variant, parameters=parameters)
 
 
 #['NEW', 'CHANGE DIAGN', 'FIN', 'RELEASE', 'CODE OK', 'BILLED', 'DELETE', 'MANUAL', 'REOPEN', 'STORNO', 'REJECT', 'SET STATUS', 'CODE NOK', 'CHANGE END', 'JOIN-PAT', 'CODE ERROR', 'ZDBC_BEHAN', 'EMPTY']
 #view_performance_spectrum(log, ['CHANGE DIAGN', 'RELEASE', 'CODE OK'], format="svg")
-"""
-Test xes_to_nx_utilities
-"""
-# G = xes_to_nx_utilities.transform_xes_log_to_nxDiGraph(log, variant='inductive')
-# #
-# nx.draw(G, with_labels=True)
-# plt.show()
-"""
-Test statistics_logs
-"""
-#case_duration_statistics(log,1, name='test')
-#test
-#case_duration_statistics_batch(False, '/home/heisenB/PycharmProjects/Queue_Mining/logs/', 'test_test')
-#activity_duration_statistics(log, '/home/heisenB/PycharmProjects/Queue_Mining/logs/')
 
 """"
 Add lifecycle transitions if not contained and add random service times following a normal distribution
@@ -80,96 +71,87 @@ Add lifecycle transitions if not contained and add random service times followin
 Quick overview on log
 """
 # attributes = pm4py.stats.get_attributes(log)
-# attribute_values = {}
-# trace_values = {}
+# attributes2 = pm4py.get_attributes(log)
+# print(attributes)
+# print(attributes2)
+
 # attribute_values = pm4py.stats.get_attribute_values(log, 'concept:instance')
-# case_arival_avg = pm4py.stats.get_case_arrival_average(log)
+# print(attribute_values)
 
 # case_start_time = [(trace[0]['concept:name'], trace[0]['start_timestamp']) for trace in log if trace and 'start_timestamp' in trace[0]]
 # case_start_time = sorted(case_start_time)
 # case_end_time = [(trace[-1]['time:timestamp'] for trace in log if trace and 'time:timestamp' in trace[-1]]
-#
-# case_diff_start_time = []
-# case_diff_waiting_time = []
-# for i in range(len(case_start_time)-1):
-#     case_diff_start_time.append((case_start_time[1][i+1]-case_start_time[1][i]).total_seconds())
-#     case_diff_waiting_time.append(())
 
 
-# print(attribute_values)
-# print(attributes)
-#print(trace_values)
-#print(case_arival_avg)
-# print(case_start_time)
-# print(case_diff_start_time)
+#dfg = dfg_discovery.apply(log) #contains activity pairs that directly-follow, use them to calculate waiting times
+#df_activities = list(dfg.keys()) # list of tuples
+# print(df_activities)
 
+#scheduled_times = {} #earliest possible execution time
 
-# activities = []
+#clms = ['case:concept:name'] + (pm4py.stats.get_attributes(log))
+#clms = ['case:concept:name', 'concept:name', 'start_timestamp', 'time:timestamp', 'scheduled_timestamp', 'org:resource']
+
+#schedules_times_df = pd.DataFrame(columns=clms)
+
+# for trace in log:
+#     for i in range(len(trace)-1):
+        # if trace[i+1]['concept:name'] not in seen:
+        #     seen.add(trace[i+1]['concept:name'])
+        #     scheduled_times[trace[i+1]['concept:name']] = []
+      #  if (trace[i]['concept:name'], trace[i+1]['concept:name']) in df_activities:
+            #scheduled_times[trace[i+1]['concept:name']].append(trace[i]['time:timestamp'])
+            # finish-start dependency, earliest start is latest finish of (all) preceding activities (if AND join)
+        #     schedules_times_df.loc[len(schedules_times_df)] = [trace.attributes['concept:name'], trace[i+1]['concept:name'],
+        #                                trace[i+1]['start_timestamp'], trace[i+1]['time:timestamp'], trace[i]['time:timestamp'], trace[i+1]['org:resource']]
+        # if trace[i]['concept:name'] == trace[0]['concept:name']:
+        #     schedules_times_df.loc[len(schedules_times_df)] = [trace.attributes['concept:name'], trace[i]['concept:name'],
+        #                                trace[i]['start_timestamp'], trace[i]['time:timestamp'], trace[i]['start_timestamp'], trace[i]['org:resource']]
+#sorted(schedules_times_list, key=operator.itemgetter(0))
+#eventually directly build dataframe from log without
+
+# schedules_times_df = schedules_times_df.sort_values(['scheduled_timestamp', 'case:concept:name'])
+# schedules_times_df.reset_index(drop=True, inplace=True)
+#schedules_times_df.to_csv('../../logs/running_example_schedule_asc.csv')
+
 # seen = set()
-# activities_times = {}
+# activities_times_intervals = {}
 # for trace in log:
 #     for event in trace:
 #         if event['concept:name'] not in seen:
 #             seen.add(event['concept:name'])
-#             activities.append(event['concept:name'])
-#             activities_times[event['concept:name']] = []
-        # if isinstance(activities_times[event['concept:name']], list):
-        #     activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (event['time:timestamp']-event['start_timestamp']).total_seconds()))
-        # else:
-        #     activities_times[event['concept:name']] = []
-        #     activities_times[event['concept:name']].append((event['start_timestamp'], event['time:timestamp'], (event['time:timestamp']-event['start_timestamp']).total_seconds()))
+#             activities_times_intervals[event['concept:name']] = []
+#         if isinstance(activities_times_intervals[event['concept:name']], list):
+#             activities_times_intervals[event['concept:name']].append((trace.attributes['concept:name'], event['start_timestamp'], event['time:timestamp']))
+#
+#
+# activities = list(set(schedules_times_df['concept:name']))
+#
+#
+# queues = dict.fromkeys(activities)
+# for a in activities:
+#     queues[a] = []
+# latest_TimePoint = schedules_times_df.at[len(schedules_times_df)-1, 'time:timestamp']
+# for row in range(len(schedules_times_df)):
+#     curr_Time = schedules_times_df.at[row, 'scheduled_timestamp']
+#     print(curr_Time)
+#     curr_TimeWindow = [curr_Time, latest_TimePoint]
+#
+#     if (schedules_times_df.at[row, 'start_timestamp'] - curr_Time).total_seconds() > 0:
+#         queues[schedules_times_df.at[row, 'concept:name']].append((schedules_times_df.at[row, 'case:concept:name'],
+#                                                                    schedules_times_df.at[row, 'start_timestamp']))
+#
+#     for que in queues.values():
+#         if len(que) > 0:
+#             for position in que:
+#                 if position[1] <= curr_Time:
+#                     que.remove(position)
+#     print("Current queue: ", queues)
+#     print("Number of cases currently: ", sum(map(len, queues.values())))
+#print('empty?', queues)
 
-# temporal_profile = temporal_profile_discovery.apply(log, parameters={})
-# print(temporal_profile)
-# dfg = dfg_discovery.apply(log) #contains activity pairs that directly-follow, use them to calculate waiting times
-# df_activities = dfg.keys()
-# print(df_activities)
-# waiting_times = {}
-# seen = set()
-# for trace in log:
-#     for i in range(len(trace)-2):
-#         if trace[i+1]['concept:name'] not in seen:
-#             seen.add(trace[i+1]['concept:name'])
-#             waiting_times[trace[i+1]['concept:name']] = []
-#         if (trace[i]['concept:name'], trace[i+1]['concept:name']) in df_activities and ((trace[i+1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds() > 0):
-#             waiting_times[trace[i+1]['concept:name']].append((trace[i+1]['start_timestamp'] - trace[i]['time:timestamp']).total_seconds())
-# from fitter import HistFit
-# from pylab import hist
-#
-# for activity in waiting_times:
-#     deltas = waiting_times[activity]
-#     mean = np.mean(deltas)
-#     min = np.min(deltas)
-#     max = np.max(deltas)
-#     std = np.std(deltas)
-#     f = Fitter(deltas)
-#     f.distributions = ['uniform', 'norm', 'gamma', 'beta', 'lognorm']
-#     f.fit()
-#     f.summary()
-#     print(activity, f.get_best(), f.summary())
-#     f.hist()
-#     f.plot_pdf()
-#
-#
-#
-#     # fig, ax = plt.subplots()
-#     # mu = mean
-#     # sigma = std
-#
-#     # the histogram of the data
-#     #n, bins, patches = ax.hist(deltas, bins=30, density=True)
-#
-#     # add a 'best fit' line
-#     #y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
-#     #     np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
-#     # ax.plot(bins, y, '--')
-#     # ax.set_xticks(range(int(min), int(max), 5))  # need to be adjusted to be readable
-#     # ax.set_xlabel('Duration in min')
-#     # ax.set_ylabel('Probability density')
-#     # ax.set_title(r'Time Distribution for activity: ' + activity)
-#     #
-#     # # Tweak spacing to prevent clipping of ylabel
-#     # fig.tight_layout()
-#     # plt.show()
+queues, stats = queue(add_finishStart_scheduleTimestamps(log), only_cases=True, len_queues=True)
 
-time_distribution_classification(activity_waiting_time_statistics(log), distributions='common')
+queues.to_csv('../../logs/queues_restricted_queues.csv')
+stats.to_csv('../../logs/queues_restricted_stats.csv')
+

@@ -12,12 +12,13 @@ class Parameters(Enum):
     CASE_ID_KEY = constants.PARAMETER_CONSTANT_CASEID_KEY
 
 
-variant = xes_importer.Variants.ITERPARSE
-parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('e.xes', variant=variant, parameters=parameters)
+if __name__ == '__main__':
+    variant = xes_importer.Variants.ITERPARSE
+    parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
+    log = xes_importer.apply('logs/running-example.xes', variant=variant, parameters=parameters)
 
-# If the user puts 2 activities, then the function checks and shows result of Service priority.
-# If the user puts one activity, then the function finds all the directly connected function with the activity and shows result for them.
-activities = ['examine casually']
-ServicePriorityDiscovery(log,activities)
+    # If the user puts 2 activities, then the function checks and shows result of Service priority.
+    # If the user puts one activity, then the function finds all the directly connected function with the activity and shows result for them.
+    activities = ['examine casually']
+    ServicePriorityDiscovery(log ,activities)
 

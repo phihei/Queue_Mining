@@ -292,6 +292,14 @@ def activity_service_time_statistics(log, directory: str='', statistics: bool=Fa
             fig.savefig(directory / 'statistics' / ('serviceTimeDist_' + activity + name + '.png'))
         return activities_times
 
+def service_time_distribution(log):
+    """
+    "For each waiting time the amount of events that waited that long is counted."
+    x axis: number of event
+    y axis: time waited by event in hours (bins)
+    :param log:
+    :return:
+    """
 
 def activity_waiting_time_statistics(log, directory: str='', statistics=False, timestamp_attribute: str=None, name: str=None):
     """

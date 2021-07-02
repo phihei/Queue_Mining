@@ -1,13 +1,26 @@
+from pm4py.streaming.stream.live_event_stream import LiveEventStream
+from pm4py.objects.conversion.log import converter as stream_converter
+from pm4py.streaming.algo.discovery.dfg import algorithm as dfg_discovery
 
 import pm4py
 
 from pm4py.algo.discovery.performance_spectrum import algorithm as performance_spectrum
 
+live_event_stream = LiveEventStream()
 
 
-def ServicePriorityDiscovery(log, activities):
+streaming_dfg = dfg_discovery.apply()
+
+live_event_stream.register(streaming_dfg)
+
+live_event_stream.start()
+
+
+
+
+def ServicePriorityDiscoveryStreaming(log, activities):
     """
-   Finds the service priority (LIFO/FIFO/Random) provided a log/dataframe
+   Finds the service priority (LIFO/FIFO/Random) in an online setting provided a log/dataframe
    and a list of activities
 
    Parameters
@@ -25,10 +38,15 @@ def ServicePriorityDiscovery(log, activities):
 
    Returns
    -------------
-   Service priority order
+   Service priority order of streaming data
    """
+    activities1=activities
+    static_event_stream = stream_converter.apply(log, variant=stream_converter.Variants.TO_EVENT_STREAM)
 
+    for ev in static_event_stream:
+        live_event_stream.append(ev)
 
+    live_event_stream.stop()
 
 
     if log is None:
@@ -36,8 +54,9 @@ def ServicePriorityDiscovery(log, activities):
     if type(log) != pm4py.objects.log.obj.EventLog:
         raise TypeError("A PM4PY Event Log is required.")
 
-
-    dfg, start_activities, end_activities = pm4py.discover_dfg(log)
+    dfg, activities, start_activities, end_activities = streaming_dfg.get()
+    # dfg, start_activities, end_activities = pm4py.discover_dfg(log)
+    activities = activities1
     df_activities = dfg.keys()
 
     if(len(activities)>1):
@@ -48,7 +67,6 @@ def ServicePriorityDiscovery(log, activities):
         for i in start_activities:
             if(i==activities[1]):
                 raise TypeError("Second activity can not be the first activity of the log")
-
 
 
 
@@ -90,7 +108,6 @@ def ServicePriorityDiscovery(log, activities):
 
 
 
-
 def Performance_Analysis(log, activities):
 
 
@@ -124,5 +141,10 @@ def Performance_Analysis(log, activities):
         result.append("Random")
 
     return result
+
+
+
+
+
 
 
