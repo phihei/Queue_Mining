@@ -18,9 +18,6 @@ live_event_stream.start()
 
 
 
-
-
-
 def ServicePriorityDiscoveryStreaming(log, activities):
     """
    Finds the service priority (LIFO/FIFO/Random) in an online setting provided a log/dataframe
@@ -41,7 +38,7 @@ def ServicePriorityDiscoveryStreaming(log, activities):
 
    Returns
    -------------
-   Service priority order
+   Service priority order of streaming data
    """
     activities1=activities
     static_event_stream = stream_converter.apply(log, variant=stream_converter.Variants.TO_EVENT_STREAM)
@@ -59,7 +56,7 @@ def ServicePriorityDiscoveryStreaming(log, activities):
 
     dfg, activities, start_activities, end_activities = streaming_dfg.get()
     # dfg, start_activities, end_activities = pm4py.discover_dfg(log)
-    activities=activities1
+    activities = activities1
     df_activities = dfg.keys()
 
     if(len(activities)>1):
@@ -73,7 +70,7 @@ def ServicePriorityDiscoveryStreaming(log, activities):
 
 
 
-
+    result = []
     if(len(activities)==1):
 
         for i in start_activities:
@@ -97,10 +94,15 @@ def ServicePriorityDiscoveryStreaming(log, activities):
             new_activity.append(df_activities_list[i])
             new_activity.append(activities[0])
             # print(new_activity)
-            Performance_Analysis(log,new_activity)
+            Final_result=Performance_Analysis(log,new_activity)
+            result.append(Final_result)
 
     else:
-        Performance_Analysis(log,activities)
+        Final_result=Performance_Analysis(log,activities)
+        result.append(Final_result)
+
+
+    return result
 
 
 
@@ -109,8 +111,7 @@ def ServicePriorityDiscoveryStreaming(log, activities):
 def Performance_Analysis(log, activities):
 
 
-    perf_spectrum = performance_spectrum.apply(log, activities)
-
+    perf_spectrum = performance_spectrum.apply(log,activities)
     Negative = 0
     Positive = 0
     for i in range(0, len(perf_spectrum['points']) - 1):
@@ -123,15 +124,24 @@ def Performance_Analysis(log, activities):
 
     # print(Negative)
     # print(Positive)
-    print(activities)
+    result = []
+    result.append(activities)
+    # print(activities)
     if Negative == 0 and Positive > 0:
-        print("Fifo")
+        # print("Fifo")
+        result.append("Fifo")
 
     elif Negative > 0 and Positive == 0:
-        print("Lifo")
+        # print("Lifo")
+        result.append("Lifo")
+
 
     else:
-        print("Random")
+        # print("Random")
+        result.append("Random")
+
+    return result
+
 
 
 

@@ -20,5 +20,6 @@ log = xes_importer.apply('e.xes', variant=variant, parameters=parameters)
 # If the user puts one activity, then the function finds all the directly connected function with the activity and shows result for them.
 activities = ['examine casually']
 
-ServicePriorityDiscoveryStreaming(log,activities)
+Final_result=ServicePriorityDiscoveryStreaming(log,activities)
+print(Final_result)
 
