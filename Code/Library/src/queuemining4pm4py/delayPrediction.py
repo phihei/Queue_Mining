@@ -19,7 +19,7 @@ class DelayPredictor:
         self.multiClassSetting = False
         if classes is not None:
             self.multiClassSetting = True
-        self.classes = classes
+            self.classes = classes
 
         self.PTSSums = dict()
         self.PTSNs = dict()
@@ -34,7 +34,6 @@ class DelayPredictor:
                 self.qs[classs] = list()
                 self.LESs[classs] = None
                 self.HOLs[classs] = None
-
 
         self.__annotate()
 
@@ -187,8 +186,8 @@ class DelayPredictor:
 
     def getQLPPrediction(self, customer, numServiceProviders, serviceProviderMeanTimes):
         if self.multiClassSetting:
-            raise NotImplementedError("QLP is not implemented for multi class settings.")
-
+            raise NotImplementedError(
+                "QLP is not implemented for multi class settings. use getQLMPPrediction_multiClass instead.")
 
         customerTrace = None
         for trace in self.eventLog:
@@ -208,7 +207,8 @@ class DelayPredictor:
 
     def getAllQLPPrediction(self, numServiceProviders, serviceProviderMeanTimes):
         if self.multiClassSetting:
-            raise NotImplementedError("QLP is not implemented for multi class settings.")
+            raise NotImplementedError(
+                "QLP is not implemented for multi class settings. use getAllQLMPPrediction_multiClass instead.")
         result = dict()
         for index, customer in enumerate(self.q):
             result[self.q[index][0]] = (serviceProviderMeanTimes * (index + 1)) / numServiceProviders
@@ -217,7 +217,8 @@ class DelayPredictor:
     def getQLMPPrediction(self, customer, numServiceProviders, serviceProviderMeanTimes: datetime.timedelta,
                           customerAbandonRate):
         if self.multiClassSetting:
-            raise NotImplementedError("QLMP is not implemented for multi class settings.")
+            raise AttributeError("In Multi Class Settings, use getQLMPPrediction_multiClass instead.")
+
         customerTrace = None
         for trace in self.eventLog:
             if trace.attributes["concept:name"] == str(customer):
@@ -234,14 +235,15 @@ class DelayPredictor:
         my = 1 / serviceProviderMeanTimes.total_seconds()
         waitTime = datetime.timedelta(seconds=0)
         for i in range(customerQueuePosition):
-            waitTime = waitTime + datetime.timedelta(seconds=1 / (numServiceProviders * my + i * customerAbandonRate))
+            waitTime = customerQueuePosition * datetime.timedelta(
+                seconds=1 / (numServiceProviders * my + i * customerAbandonRate))
         return waitTime
 
     def getAllQLMPPrediction(self, numServiceProviders, serviceProviderMeanTimes: datetime.timedelta,
                              customerAbandonRate):
 
         if self.multiClassSetting:
-            raise NotImplementedError("QLMP is not implemented for multi class settings.")
+            raise AttributeError("In Multi Class Settings, use getAllQLMPPrediction_multiClass instead.")
         result = dict()
         my = 1 / serviceProviderMeanTimes.total_seconds()
         for index, customer in enumerate(self.q):
@@ -252,6 +254,52 @@ class DelayPredictor:
                 result[self.q[index][0]] = result[self.q[index - 1][0]] + datetime.timedelta(
                     seconds=1 / (numServiceProviders * my + index * customerAbandonRate))
         return result
+
+    def getQLPPrediction_multiClass(self, customer, numServiceProviders, serviceProviderMeanTimes: datetime.timedelta,
+                                    customerArrivalRate):
+        if not self.multiClassSetting:
+            raise AttributeError("In Single Class Settings, use getQLMPPrediction instead.")
+        customerTrace = None
+        for trace in self.eventLog:
+            if trace.attributes["concept:name"] == str(customer):
+                customerTrace = trace
+                break
+        if customerTrace is None:
+            raise ValueError("Couldn't find the speficfied customer")
+        customerClass, customerQueuePosition = 0, 0
+        aheadInQueue = 0
+        for q in self.qs:
+            customerQueuePosition = 0
+            breaked = True
+            while customerQueuePosition < len(q):
+                if q[customerQueuePosition][1] == str(customer):
+                    break
+                else:
+                    aheadInQueue = aheadInQueue + 1
+                    customerQueuePosition = customerQueuePosition + 1
+            else:
+                customerClass = customerClass + 1
+                breaked = False
+            if breaked:
+                break
+        rate = numServiceProviders / serviceProviderMeanTimes.total_seconds()
+        for i in range(customerClass):
+            rate = rate - customerArrivalRate[i]
+        if rate <= 0:
+            return datetime.timedelta.max
+        waitTime = datetime.timedelta(seconds=aheadInQueue / rate)
+        return waitTime
+
+    def getAllQLPPrediction_multiClass(self, numServiceProviders, serviceProviderMeanTimes: datetime.timedelta,
+                                        customerArrivalRate):
+        if not self.multiClassSetting:
+            raise AttributeError("In Single Class Settings, use getAllQLMPPrediction instead.")
+        result = dict()
+        for q in self.qs:
+            for index, customer in enumerate(q):
+                result[customer] = self.getQLPPrediction_multiClass(customer, numServiceProviders, serviceProviderMeanTimes, customerArrivalRate)
+        return result
+
 
     def getLESPrediction(self, customer, currentTime: datetime.datetime = None):
         if self.multiClassSetting:
@@ -306,7 +354,6 @@ class DelayPredictor:
                     result[trace.attributes["concept:name"]] = max(self.LESs - customerQueueDuration,
                                                                    datetime.timedelta(seconds=0))
             return result
-
 
     def getHOLPrediction(self, customer):
         if self.multiClassSetting:
