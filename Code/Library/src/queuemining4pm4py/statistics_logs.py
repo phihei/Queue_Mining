@@ -225,7 +225,7 @@ def activity_service_time_statistics(log, directory: str='', statistics: bool=Fa
               'parameter value as string or convert event log to lifecycle format.')
     elif timestamp_attribute is not None:
         start_service = timestamp_attribute
-        emd_service = 'time:timestamp'
+        end_service = 'time:timestamp'
     else:
         start_service = 'start_timestamp'
         end_service = 'time:timestamp'
@@ -291,15 +291,6 @@ def activity_service_time_statistics(log, directory: str='', statistics: bool=Fa
             #plt.show()
             fig.savefig(directory / 'statistics' / ('serviceTimeDist_' + activity + name + '.png'))
         return activities_times
-
-def service_time_distribution(log):
-    """
-    "For each waiting time the amount of events that waited that long is counted."
-    x axis: number of event
-    y axis: time waited by event in hours (bins)
-    :param log:
-    :return:
-    """
 
 def activity_waiting_time_statistics(log, directory: str='', statistics=False, timestamp_attribute: str=None, name: str=None):
     """
@@ -403,7 +394,7 @@ def time_distribution_classification(data, distributions='common'):
     """
 
     if isinstance(data, dict):
-        #columns = ['Activity', 'Best Fit', ]
+
         for activity in data:
             deltas = data[activity]
             if not all(isinstance(x, (int, float)) for x in deltas):

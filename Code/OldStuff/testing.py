@@ -11,9 +11,11 @@ import pm4py.objects.dfg.utils.dfg_utils as pm4pydfg
 import pm4py.stats
 import scipy
 import ast
+import timeit
 
 from Code.Library.src.queuemining4pm4py.statistics_logs import *
 from Code.Library.src.queuemining4pm4py.queueDiscovery import *
+from Code.Library.src.queuemining4pm4py.delayPrediction import *
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 from pm4py.visualization.dfg import visualizer as dfg_visualization
@@ -31,7 +33,7 @@ from Code.Library.src.queuemining4pm4py import xes_to_nx_utilities
 from fitter import Fitter
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.objects.conversion.log import converter as log_converter
-
+from pm4py.algo.filtering.log.variants import variants_filter
 
 
 class Parameters(Enum):
@@ -52,7 +54,7 @@ convert .csv to XES
 #
 variant = xes_importer.Variants.ITERPARSE
 parameters = {variant.value.Parameters.TIMESTAMP_SORT: True}
-log = xes_importer.apply('../../logs/HospitalBillingEventLog_lifecycle.xes', variant=variant, parameters=parameters)
+log = xes_importer.apply('../../logs/BPI_Challenge_2019.xes', variant=variant, parameters=parameters)
 
 
 #['NEW', 'CHANGE DIAGN', 'FIN', 'RELEASE', 'CODE OK', 'BILLED', 'DELETE', 'MANUAL', 'REOPEN', 'STORNO', 'REJECT', 'SET STATUS', 'CODE NOK', 'CHANGE END', 'JOIN-PAT', 'CODE ERROR', 'ZDBC_BEHAN', 'EMPTY']
@@ -68,15 +70,64 @@ Add lifecycle transitions if not contained and add random service times followin
 #         event['time:timestamp'] = event['start_timestamp'] + timedelta(seconds=random.triangular(3, 1500))
 # xes_expoter.apply(log, '../../../../logs/running-example.xes')
 """"
+Preprocessing BPI2019
+"""
+
+sortedlog = sorting.sort_timestamp(log)
+
+for trace in sortedlog:
+    for event in trace:
+        if event.get('org:resource', "default").startswith('batch'):
+            event['org:resource'] = 'batch'
+
+xes_export_factory.export_log(sortedlog, "Batch_user_ModelB_Log.xes")
+
+# sortedlog = sorting.sort_timestamp(log)
+# activities = attributes_filter.get_attribute_values(sortedlog, "concept:name")
+# print(activities)
+# tmp = activities.keys()
+# filterlist = []
+#
+# def comp(s1):
+#     if s1[:4] == "SRM:":
+#         return True
+#     else:
+#         return False
+#
+# for key in tmp:
+#     if comp(key):
+#         filterlist.append(key)
+#
+# print(filterlist)
+#tracefilter_log = attributes_filter.apply(sortedlog, filterlist, parameters={constants.PARAMETER_CONSTANT_ATTRIBUTE_KEY: "concept:name", "positive": True})
+#filteredLog = timestamp_filter.filter_traces_contained(sortedlog, "2017-12-31 00:00:00", "2019-01-18 00:00:00")
+#xes_export_factory.export_log(tracefilter_log, "Only_SRM_2018_Log.xes")
+""""
+Filter variants
+"""
+#auto_filtered_log = variants_filter.apply_auto_filter(log, parameters={variants_filter.Parameters.DECREASING_FACTOR: 0.9})
+# filtered_log = variants_filter.filter_log_variants_percentage(log, percentage=0.4)
+# xes_expoter.apply(filtered_log, '../../logs/Hospital_lifecycle_filter_40.xes')
+
+""""
 Quick overview on log
 """
-# attributes = pm4py.stats.get_attributes(log)
-# attributes2 = pm4py.get_attributes(log)
-# print(attributes)
-# print(attributes2)
+attributes = pm4py.stats.get_attributes(log)
+attributes2 = pm4py.get_attributes(log)
+print("attributes", attributes)
+print("attributes2", attributes2)
 
-# attribute_values = pm4py.stats.get_attribute_values(log, 'concept:instance')
-# print(attribute_values)
+attribute_values_res = pm4py.stats.get_attribute_values(log, 'org:resource')
+attribute_values_user = pm4py.stats.get_attribute_values(log, 'User')
+print("attribute_values_res", attribute_values_res)
+print("attribute_values_user", attribute_values_user)
+print("equal" if attribute_values_res == attribute_values_user else "unequal")
+
+attribute_values_act = pm4py.stats.get_attribute_values(log, 'concept:name')
+print("attribute_values_act", attribute_values_act)
+
+trace_attributes = pm4py.stats.get_trace_attributes(log)
+print("trace_attributes", trace_attributes)
 
 # case_start_time = [(trace[0]['concept:name'], trace[0]['start_timestamp']) for trace in log if trace and 'start_timestamp' in trace[0]]
 # case_start_time = sorted(case_start_time)
@@ -150,8 +201,21 @@ Quick overview on log
 #     print("Number of cases currently: ", sum(map(len, queues.values())))
 #print('empty?', queues)
 
-queues, stats = queue(add_finishStart_scheduleTimestamps(log), only_cases=True, len_queues=True)
 
-queues.to_csv('../../logs/queues_restricted_queues.csv')
-stats.to_csv('../../logs/queues_restricted_stats.csv')
+#queues, stats = queue(add_scheduledTimestamps_single(log), lifecycle=False, only_cases=True, plt_bar=True)
 
+
+#queues.to_csv('../../logs/hospital_queues.csv')
+#stats.to_csv('../../logs/hospitalstats.csv')
+#
+# delayPredictor = DelayPredictor(log, "SRM: Created", "Vendor creates invoice': 219919", "Create Purchase Order Item")
+# waitPrediction1 = delayPredictor.getPTSPrediction(60, datetime.datetime(2021, 6, 18, 10))
+# print(f"Wait Prediction, Method: PTS {waitPrediction1}")
+# waitPrediction2 = delayPredictor.getQLPPrediction(60, 2, datetime.timedelta(seconds=300))
+# print(f"Wait Prediction, Method: QLP {waitPrediction2}")
+# waitPrediction3 = delayPredictor.getQLMPPrediction(60, 2, datetime.timedelta(seconds=300), 0.0001)
+# print(f"Wait Prediction, Method: QLMP {waitPrediction3}")
+# waitPrediction4 = delayPredictor.getLESPrediction(60, datetime.datetime(2021, 6, 18, 10))
+# print(f"Wait Prediction, Method: LES {waitPrediction4}")
+# waitPrediction5 = delayPredictor.getHOLPrediction(60)
+# print(f"Wait Prediction, Method: HOL {waitPrediction5}")

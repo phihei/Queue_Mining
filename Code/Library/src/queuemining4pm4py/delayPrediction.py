@@ -120,7 +120,7 @@ class DelayPredictor:
                     customerTrace = trace
                     break
             if customerTrace is None:
-                raise ValueError("Couldn't find the speficfied customer")
+                raise ValueError("Couldn't find the specified customer")
             classs = customerTrace.attributes["class"]
             if self.PTSNs[classs] != 0:
                 predictedWait = self.PTSSums[classs] / self.PTSNs[classs]
